@@ -1,0 +1,36 @@
+
+#importando o pandas e o plotly
+import pandas as pd
+import plotly.express as px
+
+#dataframe
+dados = pd.read_csv('https://raw.githubusercontent.com/Mylena-angelica/Tabagismo_APC/main/numerodemortes.csv?token=ARR4RKKX4QRUQ6I7ITZYZHTBH6RWA') 
+
+#separando os dados em linhas
+
+dados_array = dados.values
+
+Pais = []
+Codigo_ISO = []
+Ano = []
+Mortes = []
+
+for linha in dados_array:
+    Pais.append(linha[0])
+    Codigo_ISO.append(linha[1])
+    Ano.append(linha[2])
+    Mortes.append(linha[3])
+
+#gerando o grafico
+
+figura = px.scatter_geo(
+                    locations = Codigo_ISO, #identificar a posição de cada pais no mapa
+                    color = Mortes, #cor das bolhas
+                    hover_name = Pais, #nome a ser mostrado no topo ao passar o mouse
+                    size = Mortes, #tamanho da bolha
+                    animation_frame = Ano, #intervalo de tempo
+                    projection = 'natural earth' #tipo de mapa 
+    )
+figura.update_layout(title = 'O número anual de mortes atribuídas ao tabagismo por 100.000 pessoas.') #titulo
+
+figura.show()
