@@ -1,4 +1,4 @@
-#importando o pandas e o plotly
+#importando o pandas, plotly eo  numpy
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
