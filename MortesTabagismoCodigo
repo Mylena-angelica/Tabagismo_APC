@@ -1,36 +1,50 @@
-
 #importando o pandas e o plotly
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
 
 #dataframe
-dados = pd.read_csv('https://raw.githubusercontent.com/Mylena-angelica/Tabagismo_APC/main/numerodemortes.csv?token=ARR4RKKX4QRUQ6I7ITZYZHTBH6RWA') 
+df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv') 
 
-#separando os dados em linhas
+#Pegando apenas os dados de 2017
+dado_ano = df['Ano']==2017
+dados = df[dado_ano]
 
-dados_array = dados.values
+#Definindo algumas coisas
+dados['Mortes'] = dados['Mortes'].apply(np.int64) #trasformar o numero de mortes em int
 
-Pais = []
-Codigo_ISO = []
-Ano = []
-Mortes = []
+dados['text'] = dados['Pais'] + '<br>Mortes: ' + dados['Mortes'].map(str) #o texto a ser mostrado ao passar o mouse
 
-for linha in dados_array:
-    Pais.append(linha[0])
-    Codigo_ISO.append(linha[1])
-    Ano.append(linha[2])
-    Mortes.append(linha[3])
+limites = ([(0,60),(61,120),(121,180),(181,240),(241,300)]) #range que definem cada cor das bolinhas
+cores = ["royalblue","tomato","lightseagreen","orange","crimson"] #cor das bolinhas
 
-#gerando o grafico
+#Grafico
 
-figura = px.scatter_geo(
-                    locations = Codigo_ISO, #identificar a posição de cada pais no mapa
-                    color = Mortes, #cor das bolhas
-                    hover_name = Pais, #nome a ser mostrado no topo ao passar o mouse
-                    size = Mortes, #tamanho da bolha
-                    animation_frame = Ano, #intervalo de tempo
-                    projection = 'natural earth' #tipo de mapa 
-    )
-figura.update_layout(title = 'O número anual de mortes atribuídas ao tabagismo por 100.000 pessoas.') #titulo
+figura = go.Figure()
+
+for i in range(len(limites)): #len(limites) = 5
+    lim = limites[i]
+    dados_2 = dados[(dados['Mortes'] >= lim[0]) & (dados['Mortes'] < lim[1])] 
+    figura.add_trace(go.Scattergeo(
+            locationmode = 'ISO-3', #para achar o local de cada pais no mapa
+            locations = dados_2['Codigo_ISO'], #a coluna onde estão o ISO para achar o local de cada pais no mapa
+            text = dados_2['text'], #o texto a ser mostrado ao passar o mouse
+            marker = dict(
+                size = dados_2['Mortes'], #tamanho das bolinhas
+                color = cores[i], #cor das bolinhas
+                sizemode = 'area', 
+                line_color = 'rgb(40,40,40)',
+                line_width = 0.5,),
+            name = '{0} - {1}'.format(lim[0],lim[1] #aparecer o 'nome' certo na coluna no limites 
+            )))
+
+
+#Mudando layout
+
+figura.update_layout(
+        title_text = 'O número anual de mortes atribuídas ao tabagismo por 100.000 pessoas em 2017',
+        showlegend = True,
+        legend_title = "Mortes"
+)
 
 figura.show()
