@@ -1,20 +1,40 @@
+#IMPORTANDO BIBLIOTECAS
 import plotly.graph_objects as go
 import pandas as pd
+import math
 
-dados=pd.read_csv('tobacco-production.csv', sep=',')
+#ORGANIZANDO OS DADOS 
+dados=pd.read_csv('tobacco-production.csv', sep=',') #Lendo os dados que estão em csv
 
-dados_array=dados.values
+dados_array=dados.values #Criando variável para os dados
 
-pais=[]
-ano=[]
-producao=[]
-for linha in dados_array:
-    if linha[2]== 2018:
-        pais.append(linha[1])
-        ano.append(linha[2])
+pais=[] # Lista dos paises, será utlizado os codígos ISO_alpha para indicar a localidade no mapa.
+ano=[]  # Lista dos anos (min. 1961 e máx. 2018)
+producao=[] # Lista da quantidade de tabaco produzida
+
+for linha in dados_array:  #Selecionando os dados da tabela
+    if linha[2]== 2018: # A priori, a seleção do ano será assim. No futuro será por meio de um dropdown.
+        pais.append(linha[1]) 
+        ano.append(linha[2]) 
         producao.append(linha[3])
 
-fig = go.Figure(data=go.Choropleth(
+for codes in pais:
+    if not type(codes)== str:
+        if math.isnan(float(codes)):
+            index=pais.index(codes)
+            del pais[index]
+            del ano[index]
+            del producao[index]
+            
+    elif codes=='OWID_WRL'
+        index=pais.index(codes)
+            del pais[index]
+            del ano[index]
+            del producao[index]
+
+#Configurando o gráfico
+
+fig = go.Figure(data=go.Choropleth( #Recuperando dados do gráfico na base de dados e o tipo de dados
     locations = pais,
     z = producao,
     text = ano,
