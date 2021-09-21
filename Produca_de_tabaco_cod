@@ -1,25 +1,34 @@
-#IMPORTANDO BIBLIOTECAS
 import plotly.graph_objects as go
 import pandas as pd
 
-#IMPORTANDO BASE DE DADOS
-df = pd.read_csv('tobacco-production.csv',sep=",")
+dados=pd.read_csv('tobacco-production.csv', sep=',')
+
+dados_array=dados.values
+
+pais=[]
+ano=[]
+producao=[]
+for linha in dados_array:
+    if linha[2]== 2018:
+        pais.append(linha[1])
+        ano.append(linha[2])
+        producao.append(linha[3])
 
 fig = go.Figure(data=go.Choropleth(
-    locations = df['Code'],
-    z = df['Crops - Tobacco, unmanufactured - 826 - Production - 5510 - tonnes'],
-    text = df['Year'],
-    colorscale = 'inferno',
+    locations = pais,
+    z = producao,
+    text = ano,
+    colorscale = 'plasma',
     autocolorscale=False,
     reversescale=True,
     marker_line_color='darkgray',
     marker_line_width=0.5,
-    colorbar_tickprefix = 'Ton',
-    colorbar_title = 'Produção de tabaco<br>Toneladas',
+    colorbar_tickprefix = 'Toneladas',
+    colorbar_title = 'Produção em <br>toneladas',
 ))
 
 fig.update_layout(
-    title_text='Produção mundial de tabaco em toneladas',
+    title_text='Produção mundial de tabaco',
     geo=dict(
         showframe=False,
         showcoastlines=False,
@@ -30,10 +39,12 @@ fig.update_layout(
         y=0.1,
         xref='paper',
         yref='paper',
-        text='Source: <a href="https://ourworldindata.org/grapher/tobacco-production">\
-            Our World In Data</a>',
+        text='Fonte: <a href="https://ourworldindata.org/grapher/tobacco-production">\
+            Our world in Data</a>',
         showarrow = False
     )]
 )
 
 fig.show()
+
+
