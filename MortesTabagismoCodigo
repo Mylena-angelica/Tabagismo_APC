@@ -23,6 +23,7 @@ for linha in dados_array:
         Codigo_ISO.append(linha[1])
         Ano.append(linha[2])
         Mortes.append(linha[3])
+        Texto.append(f'{linha[0]} - {int(linha[3])}') #texto que vai aparecer ao passar o mouse
 
 
 #Gerando o gráfico
@@ -30,7 +31,7 @@ for linha in dados_array:
 figura = go.Figure((go.Scattergeo(
             locationmode = 'ISO-3', #para achar o local de cada pais no mapa
             locations = Codigo_ISO, #achar o local de cada pais no mapa
-            text = Mortes, #o texto a ser mostrado ao passar o mouse
+            text = Texto, #o texto a ser mostrado ao passar o mouse
             marker = dict( 
                 size = Mortes*2,#tamanho das bolinhas
                 sizemode = 'area',
