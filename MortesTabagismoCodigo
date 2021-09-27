@@ -7,10 +7,6 @@ import numpy as np
 
 df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv') 
 
-df['Mortes'] = df['Mortes'].apply(np.int64) #trasformar o numero de mortes em int
-df['Texto'] = df['Pais'] + '<br>Mortes: ' + df['Mortes'].map(str) # adicionando o texto a ser mostrado ao passar o mouse
-
-
 #transformando o dataframe em listas array
 
 dados_array = df.values
@@ -27,28 +23,30 @@ for linha in dados_array:
         Codigo_ISO.append(linha[1])
         Ano.append(linha[2])
         Mortes.append(linha[3])
-        Texto.append(linha[4])
+
 
 #Gerando o gráfico
 
 figura = go.Figure((go.Scattergeo(
             locationmode = 'ISO-3', #para achar o local de cada pais no mapa
             locations = Codigo_ISO, #achar o local de cada pais no mapa
-            text = Texto, #o texto a ser mostrado ao passar o mouse
-            marker = dict(
+            text = Mortes, #o texto a ser mostrado ao passar o mouse
+            marker = dict( 
                 size = Mortes*2,#tamanho das bolinhas
                 sizemode = 'area',
                 color = Mortes, #O que vai levar em conta para definir a escala de cor
                 colorscale = 'Rainbow', #A cor da barra
                 cmax = max(Mortes, key=int), #O numero maximo da barra de cor
                 cmin = 0, #O numero minimo da barra de cor
-                colorbar_title="Mortes"))
+                colorbar_title = "Mortes"))
+
                 ))
 
 #Mudando layout
 
 figura.update_layout(
-        title_text = 'O número anual de mortes atribuídas ao tabagismo por 100.000 pessoas em 2017',     
+        title_text = 'O número anual de mortes atribuídas ao tabagismo por 100.000 pessoas em 2017',
+
 )
 
 figura.show()
