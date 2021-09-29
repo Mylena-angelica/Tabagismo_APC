@@ -17,14 +17,12 @@ for linha in dados:
 dados_brasil2017 = dados_brasil[-1]
 dados_mundo2017 = dados_mundo[-1]
 
-print(dados_brasil2017)
-"""
 #transformando dados_brasil2017 em lista
 dados_b = []
 for elemento_b in dados_brasil2017:
     dados_b.append(elemento_b)
 
-#arrumando a ordem das idades do dados do brasil
+#arrumando a ordem das idades dos dados do brasil
 x = dados_b[6]
 dados_b[6] = dados_b[7]
 dados_b[7] = x
@@ -33,7 +31,12 @@ dados_b[7] = x
 mortes_por_idade_brasil = dados_b[3:]
 del mortes_por_idade_brasil[2]
 del mortes_por_idade_brasil[1]
-print(mortes_por_idade_brasil)
+
+#arredondando os dados (brasil)
+mortes_por_idade_brasil_arredondado = []
+for num in mortes_por_idade_brasil:
+    mortes_por_idade_brasil_arredondado.append(round(num, 2))
+#print(mortes_por_idade_brasil_arredondado)
 
 #transformando dados_mundo2017 em lista
 dados = []
@@ -46,10 +49,15 @@ dados[6] = dados[7]
 dados[7] = x
 
 #pegando apenas os dados numéricos e deletando dados zerados (mundo)
-mortes_por_idade = dados[3:]
-del mortes_por_idade[2]
-del mortes_por_idade[1]
-print(mortes_por_idade)
+mortes_por_idade_mundo = dados[3:]
+del mortes_por_idade_mundo[2]
+del mortes_por_idade_mundo[1]
+
+#arredondando os dados (mundo)
+mortes_por_idade_arredondado = []
+for num in mortes_por_idade_mundo:
+    mortes_por_idade_arredondado.append(round(num, 2))
+#print(mortes_por_idade_arredondado)
 
 #formulação da variável x do gráfico
 idades = ['Todas as idades', 'Entre 15 e 49 anos', 'Entre 50 e 69 anos', 'Mais de 70 anos']
@@ -57,13 +65,13 @@ idades = ['Todas as idades', 'Entre 15 e 49 anos', 'Entre 50 e 69 anos', 'Mais d
 barra1 = go.Bar(
     name = 'Brasil',
     x = idades,
-    y = mortes_por_idade_brasil
+    y = mortes_por_idade_brasil_arredondado
 )
 
 barra2 = go.Bar(
     name = 'Mundo',
     x = idades,
-    y = mortes_por_idade
+    y = mortes_por_idade_arredondado
 )
 
 grafico = go.Figure([barra1, barra2])
@@ -77,4 +85,3 @@ grafico.show()
 
 
 
-"""
