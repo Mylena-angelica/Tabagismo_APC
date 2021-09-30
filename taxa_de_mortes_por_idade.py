@@ -18,8 +18,7 @@ def filtrar_dados(dados):
 
     # pegando apenas os dados numéricos e deletando dados zerados
     mortes_por_idade = dados2017[3:]
-    del mortes_por_idade[2]
-    del mortes_por_idade[1]
+    del mortes_por_idade[1:3]
 
     # arredondando os dados
     mortes_por_idade_arredondado = []
