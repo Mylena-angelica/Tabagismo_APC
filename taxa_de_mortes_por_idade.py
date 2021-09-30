@@ -4,6 +4,9 @@ import plotly.graph_objects as go
 # criação de uma variável que lerá os dados csv em dataframe 
 df = pd.read_csv('death-rates-smoking-age.csv', sep = ',')
 
+# a propriedade values lê os dados em dataframe e passa para dentro de uma lista de listas
+dados = df.values
+
 # definição da função que fará a filtragem dos dados do Brasil e do mundo
 def filtrar_dados(dados):
     # transformando os dados de 2017 que estavam em array para lista
@@ -27,9 +30,6 @@ def filtrar_dados(dados):
     
     # me retorna os dados de 2017 já arredondados
     return mortes_por_idade_arredondado
-
-# a propriedade values lê os dados em dataframe e passa para dentro de uma lista de listas
-dados = df.values 
 
 # introdução dos dados do Brasil e do mundo array
 dados_mundo = []
