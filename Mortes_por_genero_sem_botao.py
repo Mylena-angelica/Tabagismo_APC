@@ -14,6 +14,8 @@ sf = []
 sm = []
 pop = []
 pais3 = []
+Texto1 = []
+Texto2 = []
 
 for linha in dados_array:  #verificar se o nome do país por linha para tirar as repetições e 
     if not linha[0] in pais3:  #armazenar apenas uma vez o nome de cada pais em pais3
@@ -29,11 +31,13 @@ for linha in dados_array:      #verificar o nome as datas e só considerar as in
         sf.append(linha[3])
         sm.append(linha[4])
         pop.append(linha[3])
-
+        Texto1.append(f'{linha[0]} - {(linha[3]):.1f} %')
+        Texto2.append(f'{linha[0]} - {(linha[4]):.1f} %')
 
 barra1 = go.Bar(
     x = sm,
     y = ano,
+    text = Texto2,
     marker=dict(color='#0099ff'),
     name = "Sexo Masculino",
     orientation='h'
@@ -41,11 +45,16 @@ barra1 = go.Bar(
 barra2 = go.Bar(
     x = sf,
     y = ano,
+    text = Texto1,
     marker=dict(color='#404040'),
     name = "Sexo Feminino",
     orientation='h'
 )
 
 grafico = go.Figure([barra1, barra2])
+
+grafico.update_layout(
+        title_text = 'Numero de mortes por gênero em função do uso de tabaco de 2007 a 2018',
+)
 
 grafico.show()
