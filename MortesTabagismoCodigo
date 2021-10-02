@@ -1,7 +1,6 @@
 #importando bibliotecas
 import pandas as pd
 import plotly.graph_objects as go
-import numpy as np
 
 #dataframe
 
@@ -15,15 +14,16 @@ Pais = []
 Codigo_ISO = []
 Ano = []
 Mortes = []
-Texto = []
+Texto = [] #criando uma lista vazia
+
 
 for linha in dados_array:
-    if linha[2]== 2017:
+    if linha[2] == 2017: #selecionando o ano que sera utilizado
         Pais.append(linha[0])
         Codigo_ISO.append(linha[1])
         Ano.append(linha[2])
         Mortes.append(linha[3])
-        Texto.append(f'{linha[0]} - {int(linha[3])}') #texto que vai aparecer ao passar o mouse
+        Texto.append(f'{linha[0]} - Mortes : {int(linha[3])}') #texto que vai aparecer ao passar o mouse por cima das bolhas
 
 
 #Gerando o gráfico
@@ -33,12 +33,12 @@ figura = go.Figure((go.Scattergeo(
             locations = Codigo_ISO, #achar o local de cada pais no mapa
             text = Texto, #o texto a ser mostrado ao passar o mouse
             marker = dict( 
-                size = Mortes*2,#tamanho das bolinhas
-                sizemode = 'area',
+                size = Mortes,#tamanho das bolinhas
+                sizemode = 'area', #Define a regra para a qual os dados são convertidos em pixels. Evita que as bolhas fiquem enormes
                 color = Mortes, #O que vai levar em conta para definir a escala de cor
                 colorscale = 'Rainbow', #A cor da barra
-                cmax = max(Mortes, key=int), #O numero maximo da barra de cor
-                cmin = 0, #O numero minimo da barra de cor
+                cmax = max(Mortes, key=int), #O valor maximo da barra de cor
+                cmin = 0, #O valor minimo da barra de cor
                 colorbar_title = "Mortes"))
 
                 ))
@@ -46,7 +46,7 @@ figura = go.Figure((go.Scattergeo(
 #Mudando layout
 
 figura.update_layout(
-        title_text = 'O número anual de mortes atribuídas ao tabagismo por 100.000 pessoas em 2017',
+        title_text = 'O número anual de mortes atribuídas ao tabagismo por 100.000 pessoas em 2017', #titulo do grafico 
 
 )
 
