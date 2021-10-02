@@ -2,9 +2,9 @@
 import pandas as pd 
 
 #Criando uma variável para ler o documento em dataframe
-dados = pd.read_csv('AnyConv.com__Alerta sobre o fumo.csv', sep = ',') 
+dados = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/AnyConv.com__Alerta%20sobre%20o%20fumo.csv') 
 
-#transformando o dataframe em listas array, valeus = propriedade 
+#transformando o dataframe em listas array, valeus = propriedade, lê os dados em dataframe e passa para dentro de uma lista de listas
 dados_lista = dados.values 
 
 #Nova variável, lista vazia
@@ -15,9 +15,9 @@ resposta = []
 
 #Criando loop, e uma nova varável chamada 'dado' dentro da 'dados_lista'
 for dado in dados_lista:
-    #Append= adicionar algo ao fim da lista, prolonga ela
+    #Append = adicionar algo ao fim da lista, prolonga ela
     localizacao.append(dado[0])
-    resposta.append(dado[1].strip()) 
+    resposta.append(dado[1].strip()) # Strip é uma função que remove quaisquer espaços iniciais e espaços finais
 
 #labels é uma variavel para indicar todos os nomes que vamos colocar no grafico
 labels = ['Alerta sobre o fumo', 'Não', 'Sim', 'Não aplicado'] + localizacao 
