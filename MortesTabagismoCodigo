@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 
 df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv') 
 
-#transformando o dataframe em listas array
+#transformando o dataframe em listas array, guardar informações de modo ordenado
 
 dados_array = df.values
 
