@@ -4,7 +4,11 @@ import plotly.graph_objects as go
 
 #dataframe
 
-df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv') 
+df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
+
+
+#'''' Array (arranjo) =  é uma estrutura de dados que armazena uma coleção de elementos de tal forma
+#que cada um dos elementos possa ser identificado por, pelo menos, um índice ou uma chave.''''
 
 #transformando o dataframe em listas array, guardar informações de modo ordenado
 
