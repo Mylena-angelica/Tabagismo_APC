@@ -8,7 +8,7 @@ df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numero
 
 #transformando o dataframe em listas array, guardar informações de modo ordenado
 
-dados_array = df.values
+dados_array = df.values 
 
 Pais = []
 Codigo_ISO = []
@@ -37,7 +37,7 @@ figura = go.Figure((go.Scattergeo(
                 sizemode = 'area', #Define a regra para a qual os dados são convertidos em pixels. Evita que as bolhas fiquem enormes
                 color = Mortes, #O que vai levar em conta para definir a escala de cor
                 colorscale = 'Rainbow', #A cor da barra
-                cmax = max(Mortes, key=int), #O valor maximo da barra de cor
+                cmax = max(Mortes), #O valor maximo da barra de cor
                 cmin = 0, #O valor minimo da barra de cor
                 colorbar_title = "Mortes"))
 
