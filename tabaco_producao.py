@@ -55,8 +55,8 @@ fig.update_layout(
         projection_type='equirectangular' #Tipo de projeção do mapa
     ),
     annotations = [dict(
-        x=0.55, #Posição da legenda de cores(coluna) no eixo x no plot
-        y=0.1, #Posição da legenda de cores(coluna) no eixo y no plot
+        x=0.55, #Posição do text no eixo x
+        y=0.1, #Posição do text no eixo y
         xref='paper', #Referência do eixo X
         yref='paper', #Referência do eixo X
         text='Fonte: <a href="https://ourworldindata.org/grapher/tobacco-production">\
