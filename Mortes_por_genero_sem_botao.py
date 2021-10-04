@@ -20,8 +20,8 @@ nas colunas (Texto1 e Texto2), respectivamente.
 ano = []
 sf = []
 sm = []
-Texto1 = []
-Texto2 = []
+texto1 = []
+texto2 = []
 
 '''
      Esse loop abaixo tem a função de verificar o nome as datas e só considerar as informações entre oa anos:
@@ -42,13 +42,13 @@ for linha in dados_array:
         sm.append(linha[4])
         
         '''
-             Essas listas Texto1 e Texto2 abaixo, iram receber uma string, com o nome do país e a porcentagem que ele tem 
-        para mortes dos sexo feminino em Texto1 e mortes dos sexo masculino em Texto 2, ficando da seguinte forma:
+             Essas listas texto1 e texto2 abaixo, iram receber uma string, com o nome do país e a porcentagem que ele tem 
+        para mortes dos sexo feminino em texto1 e mortes dos sexo masculino em texto 2, ficando da seguinte forma:
         Por exemplo: (''Brazil - 11,5 %''). 
         '''
         
-        Texto1.append(f'{linha[0]} - {(linha[3]):.1f} %')
-        Texto2.append(f'{linha[0]} - {(linha[4]):.1f} %')
+        texto1.append(f'{linha[0]} - {(linha[3]):.1f} %')
+        texto2.append(f'{linha[0]} - {(linha[4]):.1f} %')
 
 '''
     Abaixo são criadas duas figuras relativas aos graficos, Barra1 para mostrar a porcentagem de mortes do genero feminino 
@@ -63,7 +63,7 @@ barra1 = go.Bar(
         text recebe o texto com a string presente nas variaveis Texto1, isso tambem é feito na estrutura de codigo do gráfico Barra2
         '''
         
-    text = Texto2,
+    text = texto2,
         
         '''
         marker recebe a cor que a barra do grafico apareça, por exemplo: '#0099ff' equivale a cor azul
@@ -91,7 +91,7 @@ Os mesmos comentarios feitos quanto a Barra1 valem para Barra2
 barra2 = go.Bar(
     x = sf,
     y = ano,
-    text = Texto1,
+    text = texto1,
     marker=dict(color='#404040'),
     name = "Sexo Feminino",
     orientation='h'
