@@ -14,11 +14,13 @@ df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numero
 
 dados_array = df.values 
 
+#criando listas vazias
+
 pais = []
 codigo_ISO = []
 ano = []
 mortes = []
-texto = [] #criando uma lista vazia
+texto = [] 
 
 
 for linha in dados_array:
