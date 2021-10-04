@@ -13,24 +13,16 @@ dados_array = dados.values
 print(dados_array)
 '''
 
-sigla = []
+'''
+Abaixo são declaradas listas vazias, que iram receber os anos (ano), porcentagem do sexo feminino (sf), porcentagem do sexo masculino (sm) e dois textos que iram aparecer 
+nas colunas (Texto1 e Texto2), respectivamente
+'''
 ano = []
 sf = []
 sm = []
-pop = []
-pais3 = []
 Texto1 = []
 Texto2 = []
 
-'''O loop abaixo tem a função de verificar se o nome do país por linha para tirar as repetições e
-armazenar apenas uma vez o nome de cada pais em pais3
-'''
-
-for linha in dados_array:   
-    if not linha[0] in pais3:  
-        pais3.append(linha[0])
-        sigla.append(linha[1])
-        
 '''
 Esse loop abaixo tem a função de verificar o nome as datas e só considerar as informações entre oa anos:
 2007, 2010, 2012, 2014, 2016 e 2018
@@ -42,7 +34,6 @@ for linha in dados_array:
         ano.append(linha[2])
         sf.append(linha[3])
         sm.append(linha[4])
-        pop.append(linha[3])
         Texto1.append(f'{linha[0]} - {(linha[3]):.1f} %')
         Texto2.append(f'{linha[0]} - {(linha[4]):.1f} %')
 
@@ -66,7 +57,7 @@ barra2 = go.Bar(
 grafico = go.Figure([barra1, barra2])
 
 grafico.update_layout(
-        title_text = 'Numero de mortes por gênero em função do uso de tabaco de 2007 a 2018',
+        title_text = 'Numero de mortes por gênero em função do uso de tabaco, no Brasil, de 2007 a 2018',
 )
 
 grafico.show()
