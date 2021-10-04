@@ -14,34 +14,34 @@ df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numero
 
 dados_array = df.values 
 
-Pais = []
-Codigo_ISO = []
-Ano = []
-Mortes = []
-Texto = [] #criando uma lista vazia
+pais = []
+codigo_ISO = []
+ano = []
+mortes = []
+texto = [] #criando uma lista vazia
 
 
 for linha in dados_array:
     if linha[2] == 2017: #selecionando o ano que sera utilizado
-        Pais.append(linha[0])
-        Codigo_ISO.append(linha[1])
-        Ano.append(linha[2])
-        Mortes.append(linha[3])
-        Texto.append(f'{linha[0]} - Mortes : {int(linha[3])}') #texto que vai aparecer ao passar o mouse por cima das bolhas
+        pais.append(linha[0])
+        codigo_ISO.append(linha[1])
+        ano.append(linha[2])
+        mortes.append(linha[3])
+        texto.append(f'{linha[0]} - Mortes : {int(linha[3])}') #texto que vai aparecer ao passar o mouse por cima das bolhas
 
 
 #Gerando o gráfico
 
 figura = go.Figure((go.Scattergeo(
             locationmode = 'ISO-3', #para achar o local de cada pais no mapa
-            locations = Codigo_ISO, #achar o local de cada pais no mapa
-            text = Texto, #o texto a ser mostrado ao passar o mouse
+            locations = codigo_ISO, #achar o local de cada pais no mapa
+            text = texto, #o texto a ser mostrado ao passar o mouse
             marker = dict( 
-                size = Mortes,#tamanho das bolinhas
-                sizemode = 'area', #Define a regra para a qual os dados são convertidos em pixels. Evita que as bolhas fiquem enormes
-                color = Mortes, #O que vai levar em conta para definir a escala de cor
+                size = mortes,#tamanho das bolinhas
+                sizemode = 'area', #A  regra para a qual os dados sãoconvertidos em pixels. Evita que as bolhas fiquem enormes
+                color = mortes, #O que vai levar em conta para definir a escala de cor
                 colorscale = 'Rainbow', #A cor da barra
-                cmax = max(Mortes), #O valor maximo da barra de cor
+                cmax = max(mortes), #O valor maximo da barra de cor
                 cmin = 0, #O valor minimo da barra de cor
                 colorbar_title = "Mortes"))
 
