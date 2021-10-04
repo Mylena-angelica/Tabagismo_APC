@@ -49,13 +49,13 @@ for linha in dados_array:
 
 '''
     Essas listas texto1 e texto2 abaixo, iram receber uma string, com o nome do país e a porcentagem que ele tem 
-para mortes dos sexo feminino em texto1 e mortes dos sexo masculino em texto 2, ficando da seguinte forma:
+para consumidores de tabaco do sexo feminino em texto1 e do sexo masculino em texto 2, ficando da seguinte forma:
 Por exemplo: (''Brazil - 11,5 %''). 
 '''        
 
 '''
-    Abaixo são criadas duas figuras relativas aos graficos, Barra1 para mostrar a porcentagem de mortes do genero feminino 
-e Barra2 para mostrar a porcentagem de mortes do genero masculino, de 2007 a 2018.
+    Abaixo são criadas duas figuras relativas aos graficos, Barra1 para mostrar a porcentagem de uso do tabaco pelo genero feminino 
+e Barra2 para mostrar a porcentagem de uso do tabaco pelo genero masculino, de 2007 a 2018.
 '''
 
 barra1 = go.Bar(
@@ -81,7 +81,7 @@ barra2 = go.Bar(
 )
 
 '''
-grafico irá receber uma figura, que associa as duas barras, para comparar o a taxa de mortes entre os generos
+grafico irá receber uma figura, que associa as duas barras, para comparar o a taxa de uso do tabaco entre os generos
 '''
 
 grafico = go.Figure([barra1, barra2])
@@ -92,7 +92,7 @@ Esse layout abaixo é apenas para atribuir o titulo ao gráfico
 '''
 
 grafico.update_layout(
-        title_text = 'Numero de mortes por gênero em função do uso de tabaco, no Brasil, de 2007 a 2018',
+        title_text = 'Uso de tabaco por gênero, no Brasil, de 2007 a 2018',
 )
 
 grafico.show()
