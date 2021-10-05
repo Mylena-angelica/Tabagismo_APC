@@ -69,7 +69,7 @@ barra2 = go.Bar(
 grafico = go.Figure([barra1, barra2])
 
 # layout e título
-grafico.update_layout(barmode = 'group',  # layout de barras mais finas
+grafico.update_layout(barmode = 'group',  # layout de barras uma ao lado da outra
 title = 'Taxa de mortes prematuras devido ao tabagismo no ano de 2017'
 )
 
