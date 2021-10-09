@@ -116,7 +116,7 @@ def grafico_consumo_por_genero(argumento):
 
 
     grafico.update_layout(            #Atualiza o layout incerindo um título para o grafico e subtítulos nos eixos
-        
+        plot_bgcolor = 'white',
         xaxis_title = 'ano',
         yaxis_title = 'Consumidores de tabaco (em %)',
         title = dict(
