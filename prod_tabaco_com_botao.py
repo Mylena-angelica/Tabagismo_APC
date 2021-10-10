@@ -92,14 +92,14 @@ def update_output(num_clicks, val_selected):
         ))
 
         fig.update_layout(
-            title_text='Produção mundial de tabaco no ano de "{}"'.format{val_selected), #Título do gráfico UTILIZANDO O ANO ESCRITO NO BOTÃO
+            title_text='Produção mundial de tabaco por país no ano de {}'.format(val_selected), #Título do gráfico UTILIZANDO O ANO ESCRITO NO BOTÃO
             geo=dict(
-                showframe=False, # Borda do mapa, quando False não irá aparecer
-                showcoastlines=False, # Fronteiras costeiras, quando False não são marcadas
-                projection_type='equirectangular' #Tipo de projeção do mapa
+                showframe=False,
+                showcoastlines=False,
+                projection_type='equirectangular'
             ),
             annotations = [dict(
-                x=0.55, #Posição do text no eixo x
+                 x=0.55, #Posição do text no eixo x
                 y=0.1, #Posição do text no eixo y
                 xref='paper', #Referência do eixo X
                 yref='paper', #Referência do eixo X
@@ -108,11 +108,10 @@ def update_output(num_clicks, val_selected):
                 showarrow = False #Questão estética
             )]
         )
+                
 
-        return ('O ano selecionado foi "{}" e você já fez  \
-                 {} pesquisas'.format(val_selected, num_clicks))  #IRÁ RETORNAR OS INPUTS DECLARADOS LÁ EM CIMA, APARECERÁ DEBAIXO DO CAMPO PARA DIGITAR O ANO
+        return ('O ano selecionado foi {} e você já fez  \
+                 {} pesquisas'.format(val_selected, num_clicks),fig)  #IRÁ RETORNAR OS INPUTS DECLARADOS LÁ EM CIMA, APARECERÁ DEBAIXO DO CAMPO PARA DIGITAR O ANO
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-
