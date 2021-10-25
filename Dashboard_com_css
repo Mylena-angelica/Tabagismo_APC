@@ -9,18 +9,18 @@ from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
-
 #IMPORTANDO AS BASES DE DADO
-dados_prod_tabaco = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv", sep=',')
-dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
-dados_morte_p_idade = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/death-rates-smoking-age.csv", sep = ',')
+dados_prod_tabaco = pd.read_csv('Dashbord/tobacco-production.csv', sep=',')
+dados_consumo_p_genero = pd.read_csv("plotly/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
+dados_morte_p_idade = pd.read_csv('Dashbord/death-rates-smoking-age.csv', sep = ',')
 dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/AnyConv.com__Alerta%20sobre%20o%20fumo.csv') 
-dados_mortes = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
+
 
 
 ##################configurações grafico de consumo por genero################################
 
 dados_array_consumo_p_genero = dados_consumo_p_genero.values
+#print(dados_array)
 
 #Declaração de listas vazias
 list_pais_consumo_p_genero = []
@@ -29,7 +29,6 @@ pais = []
 for linha in dados_array_consumo_p_genero:      #verificar se o nome do país por linha para tirar as repetições e 
     if (not linha[0] in list_pais_consumo_p_genero) and (not isnan(float(linha[3]))):  #armazenar apenas uma vez o nome de cada pais em pais3
         list_pais_consumo_p_genero.append(linha[0])
-
 
 ################################# Função relacionado ao grafico ALERTA SOBRE O FUMO #######################
 
@@ -88,9 +87,10 @@ app = dash.Dash(__name__,external_stylesheets=external_stylesheets)
 app.layout = html.Div([
 #html.Div: O layout é composto por uma árvore de "componentes" como html.Div e dcc.Graph, onde saõ escolhidas opções de titulos, subtitutos,..., enfi formatação do visual da pagina.
         html.Div([
-            html.H1("Dados sobre Tabagismo", style = {'color': 'grey', 'fontSize' : 30}, className="card-body")
+            html.H1("Dados sobre Tabagismo", style = {'color': 'grey', 'fontsize' : 30}, className="card-body")
         ]),
         html.Br(),
+
 
 ########### Layout relacionado ao grafico PRODUÇÃO DE TABACO ########################
     
@@ -190,13 +190,13 @@ app.layout = html.Div([
         ], style={'text-align': 'center'}),
         html.Br(),
 
+
 ########### Layout relacionado ao grafico de Alerto sobre o fumo ########################
     html.Div([
         dcc.Graph(figure = grafico1)    # o dcc.Graph irá receber o gráfico da função 'the_graph' que foi endereçada no componente do output
     ],className="card-body"),
 
     ])
-
 
 
 ################################# CALLBACK relacionado ao grafico PRODUÇÃO DE TABACO ###############################################
@@ -400,8 +400,9 @@ def update_output(value):
     if value is None:
         raise PreventUpdate
     else:
+        dados_morte = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
 
-        dados_array = dados_mortes.values 
+        dados_array = dados_morte.values 
 
         pais = []
         codigo_ISO = []
