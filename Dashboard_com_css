@@ -9,18 +9,18 @@ from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
-#IMPORTANDO AS BASES DE DADO
-dados_prod_tabaco = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv', sep=',')
-dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
-df = pd.read_csv('Dashbord/death-rates-smoking-age.csv', sep = ',')
-dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/AnyConv.com__Alerta%20sobre%20o%20fumo.csv') 
 
+#IMPORTANDO AS BASES DE DADO
+dados_prod_tabaco = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv", sep=',')
+dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
+dados_morte_p_idade = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/death-rates-smoking-age.csv", sep = ',')
+dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/AnyConv.com__Alerta%20sobre%20o%20fumo.csv') 
+dados_mortes = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
 
 
 ##################configurações grafico de consumo por genero################################
 
 dados_array_consumo_p_genero = dados_consumo_p_genero.values
-#print(dados_array)
 
 #Declaração de listas vazias
 list_pais_consumo_p_genero = []
@@ -29,6 +29,7 @@ pais = []
 for linha in dados_array_consumo_p_genero:      #verificar se o nome do país por linha para tirar as repetições e 
     if (not linha[0] in list_pais_consumo_p_genero) and (not isnan(float(linha[3]))):  #armazenar apenas uma vez o nome de cada pais em pais3
         list_pais_consumo_p_genero.append(linha[0])
+
 
 ################################# Função relacionado ao grafico ALERTA SOBRE O FUMO #######################
 
@@ -87,7 +88,7 @@ app = dash.Dash(__name__,external_stylesheets=external_stylesheets)
 app.layout = html.Div([
 #html.Div: O layout é composto por uma árvore de "componentes" como html.Div e dcc.Graph, onde saõ escolhidas opções de titulos, subtitutos,..., enfi formatação do visual da pagina.
         html.Div([
-            html.H1("Dados sobre Tabagismo", style = {'color': 'grey', 'fontsize' : 30}, className="card-body")
+            html.H1("Dados sobre Tabagismo", style = {'color': 'grey', 'fontSize' : 30}, className="card-body")
         ]),
         html.Br(),
 
@@ -268,7 +269,7 @@ def update_output(num_clicks, val_selected):
                 y=0.1, #Posição do text no eixo y
                 xref='paper', #Referência do eixo X
                 yref='paper', #Referência do eixo X
-                text='Fonte: <a href="https://ourworldindata.org/grapher/tobacco-production">\
+                text='Fonte: <a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html">\
                     Our world in Data</a>', #LINK COM A FONTE DA BASE DE DADOS
                 showarrow = False #Questão estética
             )]
@@ -399,9 +400,8 @@ def update_output(value):
     if value is None:
         raise PreventUpdate
     else:
-        df = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
 
-        dados_array = df.values 
+        dados_array = dados_mortes.values 
 
         pais = []
         codigo_ISO = []
@@ -453,7 +453,7 @@ def update_output(num_clicks, val_selected):
     if val_selected is None: 
         raise PreventUpdate 
     else:
-        dados = df.values   # a propriedade values lê os dados em dataframe e passa para dentro de uma lista de listas
+        dados = dados_morte_p_idade.values   # a propriedade values lê os dados em dataframe e passa para dentro de uma lista de listas
          
         # introdução dos dados do Brasil e do mundo array 
         dados_mundo = []
