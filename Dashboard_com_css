@@ -434,7 +434,7 @@ def update_output(value):
 
                         ))
         figura.update_layout(barmode = 'group',  # layout de barras uma do lado da outra
-        title = 'Taxa de mortes prematuras devido ao tabagismo no ano de {}'.format(value)
+        title = ("Mortes por fumo a cada 100 mil habitantes")
         ),
         return ('Ano selecionado "{}" '.format(value), figura)
 
