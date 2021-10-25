@@ -10,7 +10,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 #IMPORTANDO AS BASES DE DADO
-dados_prod_tabaco = pd.read_csv('Dashbord/tobacco-production.csv', sep=',')
+dados_prod_tabaco = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv', sep=',')
 dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
 df = pd.read_csv('Dashbord/death-rates-smoking-age.csv', sep = ',')
 dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/AnyConv.com__Alerta%20sobre%20o%20fumo.csv') 
@@ -268,7 +268,7 @@ def update_output(num_clicks, val_selected):
                 y=0.1, #Posição do text no eixo y
                 xref='paper', #Referência do eixo X
                 yref='paper', #Referência do eixo X
-                text='Fonte: <a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html">\
+                text='Fonte: <a href="https://ourworldindata.org/grapher/tobacco-production">\
                     Our world in Data</a>', #LINK COM A FONTE DA BASE DE DADOS
                 showarrow = False #Questão estética
             )]
