@@ -82,7 +82,7 @@ def update_output(num_clicks, val_selected):
             locations = pais, #Utiliza os ISO_Alpha (Codes) para localizar os países no gráfico
             z = producao, #Utiliza os dados de produção, é o que relaciona as cores do gráfico
             text = val_selected, #DIZ QUE O QUE APARECERÁ NAS CAIXINHAS DE TEXTO, SERÁ O QUE FOI DIGITADO NO BOTÃO, OU SEJA, O ANO
-            colorscale = 'sunsetdark',  # Paleta de cores do mapa
+            colorscale = 'plasma',  # Paleta de cores do mapa
             autocolorscale=False, # O false determina que você escolhe a paleta de cores
             reversescale=True, # Quando verdadeira, associa as cores aos valores do z
             marker_line_color='darkgray', # Cor das fronteiras
