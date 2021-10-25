@@ -12,7 +12,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 #IMPORTANDO AS BASES DE DADO
-dados=pd.read_csv('tobacco-production.csv', sep=',')
+dados=pd.read_csv('https://github.com/Mylena-angelica/Tabagismo_APC/blob/main/tobacco-production.csv', sep=',')
 
 #UTILIZANDO O DASH PARA CRIAR UMA PÁGINA
 app = dash.Dash(__name__)
