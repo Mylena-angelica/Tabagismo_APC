@@ -10,15 +10,17 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 #IMPORTANDO AS BASES DE DADO
-dados_prod_tabaco = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv", sep=',')
-dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
-dados_morte_p_idade = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/death-rates-smoking-age.csv", sep = ',')
+dados_prod_tabaco = pd.read_csv('Dashbord/tobacco-production.csv', sep=',')
+dados_consumo_p_genero = pd.read_csv("plotly/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
+dados_morte_p_idade = pd.read_csv('Dashbord/death-rates-smoking-age.csv', sep = ',')
 dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/AnyConv.com__Alerta%20sobre%20o%20fumo.csv') 
+
 
 
 ##################configurações grafico de consumo por genero################################
 
 dados_array_consumo_p_genero = dados_consumo_p_genero.values
+#print(dados_array)
 
 #Declaração de listas vazias
 list_pais_consumo_p_genero = []
@@ -27,8 +29,6 @@ pais = []
 for linha in dados_array_consumo_p_genero:      #verificar se o nome do país por linha para tirar as repetições e 
     if (not linha[0] in list_pais_consumo_p_genero) and (not isnan(float(linha[3]))):  #armazenar apenas uma vez o nome de cada pais em pais3
         list_pais_consumo_p_genero.append(linha[0])
-
-#--------------------------------------------------------------------------------------------------------------------
 
 ################################# Função relacionado ao grafico ALERTA SOBRE O FUMO #######################
 
@@ -62,132 +62,136 @@ for relacao in zip(labels, parents):
 import plotly.graph_objects as go 
 
 #abrindo para começar a colocar o grafico escolhido
-grafico5 = go.Figure(go.Sunburst( 
+grafico1 = go.Figure(go.Sunburst( 
     #Labels:Todos os nomes que irão aparecer no gráfico(parametro fixo)as listas se relacionam
     labels = labels, 
     #parents:A inidicação de quem é filho de quem(parametro fixo)
     parents = parents 
 ))
-grafico5.update_layout(
-    title_text=("Alerta sobre o fumo"),
+grafico1.update_layout(
+        title_text=("Alerta sobre o fumo"),
 )
 
-#--------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------INTRODUÇÃO AO DASH-----------------------------------------------------
-#--------------------------------------------------------------------------------------------------------------------
 
 #UTILIZANDO O DASH PARA CRIAR UMA PÁGINA
-#app = dash.Dash(__name__)
-
 app = dash.Dash(__name__)
 
 #---------------------------------------------------------------
 #MODIFICANDO O LAYOUT DO APP 
-app.layout = html.Div([  
 
+app.layout = html.Div([
 #html.Div: O layout é composto por uma árvore de "componentes" como html.Div e dcc.Graph, onde saõ escolhidas opções de titulos, subtitutos,..., enfi formatação do visual da pagina.
-    html.Div([
-        html.H1("Dados sobre Tabagismo", style = {'color': 'grey', 'fontsize' : 30})
-    ]),
-    html.Br(),
-    
+        html.Div([
+            html.H1("Dados sobre Tabagismo", style = {'color': 'grey', 'fontsize' : 30}, className="card-body")
+        ]),
+        html.Br(),
+
+
 ########### Layout relacionado ao grafico PRODUÇÃO DE TABACO ########################
     
-    html.Div([
-        dcc.Graph(id='the_graph') #IDENTIFICANDO O QUE SERÁ USANDO, NO CASO UM GRÁFICO (id É UMA STRING QUE IDENTIFICA O QUE SERÁ USADO NO DASH)
-    ]),
-    html.Div([
-        dcc.Input(id='input_state', type='number', inputMode='numeric', value=2017,       #id(IDENTIFICANDO O QUE SERÁ O INPUT), type(QUER DIZER QUE SERÁ ESCRITO UM NÚMERO)
-                  #inputmode(DIZ O TIPO DE "LINGUAGEM, NO CASO SERÁ NUMERAL, MAS EM OUTRO CASOS PODE SER LATIN, POR EXEMPLO), value(É O VALOR DO INPUT, OU SEJA, SEMPRE QUE GERAR O GRÁFICO SERÁ NESSE ANO)
-                  max=2018, min=1961, required=True), #max(O ANO MÁXIMO QUE PODE SER RECEBIDO), min(O MENOR ANO A SER COLOCADO), required( QUANDO VERDADEIRO DIZ QUE É OBRIGATÓRIO O PREENCHIMENTO)
-        html.Button(id='submit_button', n_clicks=0, children='Gerar gráfico'), #id(IDENTIFICANDO O QUE SERÁ), n_clicks(REPRESENTA O NÚMERO DE VEZES QUE UM ELEMENTO FOI CLICADO, NO CASO O INICIAL SERÁ 0), children(A "CRIANÇA DESSE COMPONENTE, OU SEJA, COMO SERÁ CHAMADO O BOTÃO)
-        html.Div(id='output_state'), #id(IDENTIFICANDO)
+        html.Div([
+            dcc.Graph(id='the_graph') #IDENTIFICANDO O QUE SERÁ USANDO, NO CASO UM GRÁFICO (id É UMA STRING QUE IDENTIFICA O QUE SERÁ USADO NO DASH)
+        ],className="card-body"),
+        html.Br(),
+        html.Div([
+            dcc.Input(id='input_state', type='number', inputMode='numeric', value=2017,       #id(IDENTIFICANDO O QUE SERÁ O INPUT), type(QUER DIZER QUE SERÁ ESCRITO UM NÚMERO)
+                    #inputmode(DIZ O TIPO DE "LINGUAGEM, NO CASO SERÁ NUMERAL, MAS EM OUTRO CASOS PODE SER LATIN, POR EXEMPLO), value(É O VALOR DO INPUT, OU SEJA, SEMPRE QUE GERAR O GRÁFICO SERÁ NESSE ANO)
+                    max=2018, min=1961, required=True), #max(O ANO MÁXIMO QUE PODE SER RECEBIDO), min(O MENOR ANO A SER COLOCADO), required( QUANDO VERDADEIRO DIZ QUE É OBRIGATÓRIO O PREENCHIMENTO)
+            html.Button(id='submit_button', n_clicks=0, children='Gerar gráfico'), #id(IDENTIFICANDO O QUE SERÁ), n_clicks(REPRESENTA O NÚMERO DE VEZES QUE UM ELEMENTO FOI CLICADO, NO CASO O INICIAL SERÁ 0), children(A "CRIANÇA DESSE COMPONENTE, OU SEJA, COMO SERÁ CHAMADO O BOTÃO)
+            html.Div(id='output_state'), #id(IDENTIFICANDO)
+        ],style={'text-align': 'center'}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO
 
-    ],style={'text-align': 'center'}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO
 
 ##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
-
-    html.Br(),
-    html.Br(),
-
-    #html.Div: O layout é composto por uma árvore de "componentes" como html.Div e dcc.Graph, onde saõ escolhidas opções de titulos, subtitutos,..., enfi formatação do visual da pagina.
-
+    
+        html.Br(),
+        html.Br(),
+    
 
 ########## Layout relacionado ao grafico CONSUMO POR GENERO ############################ 
-   
-    #O dcc dropdown determina uma caixa de opções de entrada, no caso os nomes dos paises. Aqui nos endereçamos as identificações
-    #Caixa de opções:
-    dcc.Graph(id = "grafico-por-pais"),  #dcc.Graph irá receber o grafico da função "grafico_morte_por_pais" endereçada no componente "output" do callback
 
-    dcc.Dropdown(                                           
-        id = "paises",
-        options = [{'label' : name, 'value' : name} for name in list_pais_consumo_p_genero],      #delimita as opções dos nomes dos paises a serem escolhidos, que estão na variável pais3
-        value = "Africa Eastern and Southern",                           # esse é o primeiro nome que vai aparecer na caixa de opções
-        clearable = False
-    ),
+   
+        #O dcc dropdown determina uma caixa de opções de entrada, no caso os nomes dos paises. Aqui nos endereçamos as identificações
+        html.Div([
+            dcc.Graph(id = "grafico-por-pais"),                   #dcc.Graph irá receber o grafico da função "grafico_morte_por_pais" endereçada no componente "output" do callback
+        ],className="card-body"),
+
+        html.Br(),
+        #Caixa de opções:        
+        html.Div(  
+            dcc.Dropdown(                                           
+                id = "paises",
+                options = [{'label' : name, 'value' : name} for name in list_pais_consumo_p_genero],      #delimita as opções dos nomes dos paises a serem escolhidos, que estão na variável pais3
+                value = "Africa Eastern and Southern",                           # esse é o primeiro nome que vai aparecer na caixa de opções
+                clearable = False,
+                style={"border-radius":"10px", "border":" 1px solid white", "font-weight":"bold"}
+            ),className="nav-item dropdown"),
+        
 
 ##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
 
-    html.Br(),
-    html.Br(),
+        html.Br(),
+        html.Br(),
 
 ########### Layout relacionado ao grafico do NUMERO DE MORTES ########################
 
-    html.Div([dcc.Graph(id='our_graph'),
-    dcc.Slider(
-        id='my-slider',
-        min= 1990,
-        max= 2017,
-        step= 1,
-        value=2017,
-        marks={
-                2017: '2017', 
-                2014: '2014',
-                2011: '2011', 
-                2008: '2008', 
-                2005: '2005', 
-                2002: '2002', 
-                1999: '1999', 
-                1996: '1996', 
-                1993: '1993',
-                1990: '1990'
-            },
-        tooltip={"placement": "bottom", "always_visible": True}
-    ),
-    html.Div(id='slider-output-container'),
-    ], style = {'text-align': 'center'}),
+        html.Div([dcc.Graph(id='our_graph'),
+        ],className="card-body"),
+        html.Br(),
+        html.Div([
+            dcc.Slider(
+                id='my-slider',
+                min= 1990,
+                max= 2017,
+                step= 1,
+                value=2017,
+                marks={
+                        2017: '2017', 
+                        2014: '2014',
+                        2011: '2011', 
+                        2008: '2008', 
+                        2005: '2005', 
+                        2002: '2002', 
+                        1999: '1999', 
+                        1996: '1996', 
+                        1993: '1993',
+                        1990: '1990'
+                    },
+                tooltip={"placement": "bottom", "always_visible": True}
+
+            ),
+            html.Div(id='slider-output-container'), 
+            ],style={"text-align": "center", "border-radius":"10px", "border":" 1px solid white", "font-weight":"bold"}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO,
+        
 
 ##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
 
-    html.Br(),
-    html.Br(),
+        html.Br(),
+        html.Br(),
 
 ########### Layout relacionado ao grafico do NUMERO DE MORTES por idade ########################
-    
-    html.Div([
-        dcc.Graph(id = 'the_graph4')    # o dcc.Graph irá receber o gráfico da função 'the_graph' que foi endereçada no componente do output
-    ]),
+        
+        html.Div([
+            dcc.Graph(id = 'the_graph4')    # o dcc.Graph irá receber o gráfico da função 'the_graph4' que foi endereçada no componente do output
+        ], className="card-body"),
 
-    html.Div([
-        dcc.Input(id ='input_states', type = 'number', inputMode = 'numeric', value = 2017,   
-                max = 2017, min = 1990, required = True), 
+        html.Br(),
+        html.Div([
+            dcc.Input(id ='input_states', type = 'number', inputMode = 'numeric', value = 2017,   
+                    max = 2017, min = 1990, required = True), 
 
-        html.Button(id = 'submit_button4', n_clicks = 0, children = 'Gerar gráfico'),
-        html.Div(id = 'output_states'), 
-    ], style = {'text-align': 'center'}),
-
-##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
-
-    html.Br(),
-    html.Br(),
+            html.Button(id = 'submit_button4', n_clicks = 0, children = 'Gerar gráfico'),
+            html.Div(id = 'output_states'), 
+        ], style={'text-align': 'center'}),
+        html.Br(),
 
 
 ########### Layout relacionado ao grafico de Alerto sobre o fumo ########################
     html.Div([
-        dcc.Graph(figure = grafico5)    # o dcc.Graph irá receber o gráfico da função 'the_graph' que foi endereçada no componente do output
-    ]),
+        dcc.Graph(figure = grafico1)    # o dcc.Graph irá receber o gráfico da função 'the_graph' que foi endereçada no componente do output
+    ],className="card-body"),
 
-])
+    ])
 
 
 ################################# CALLBACK relacionado ao grafico PRODUÇÃO DE TABACO ###############################################
@@ -391,9 +395,9 @@ def update_output(value):
     if value is None:
         raise PreventUpdate
     else:
-        dados_mortes = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
+        dados_morte = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
 
-        dados_array_mortes = dados_mortes.values 
+        dados_array = dados_morte.values 
 
         pais = []
         codigo_ISO = []
@@ -401,7 +405,7 @@ def update_output(value):
         mortes = []
         texto = [] 
 
-        for linha in dados_array_mortes:
+        for linha in dados_array:
             if linha[2] == value: #selecionando o ano que sera utilizado
                 pais.append(linha[0])
                 codigo_ISO.append(linha[1])
@@ -425,11 +429,9 @@ def update_output(value):
                         colorbar_title = "Mortes"))
 
                         ))
-
         figura.update_layout(barmode = 'group',  # layout de barras uma do lado da outra
-        title = 'Taxa de mortes prematuras devido ao tabagismo no ano de {}'.format(value)
-        )
-        
+        title = ("Mortes por fumo a cada 100 mil habitantes")
+        ),
         return ('Ano selecionado "{}" '.format(value), figura)
 
 
@@ -447,13 +449,13 @@ def update_output(num_clicks, val_selected):
     if val_selected is None: 
         raise PreventUpdate 
     else:
-        dados_array_morte_p_idade = dados_morte_p_idade.values   # a propriedade values lê os dados em dataframe e passa para dentro de uma lista de listas
+        dados = dados_morte_p_idade.values   # a propriedade values lê os dados em dataframe e passa para dentro de uma lista de listas
          
         # introdução dos dados do Brasil e do mundo array 
         dados_mundo = []
         dados_brasil = []
 
-        for linha in dados_array_morte_p_idade:
+        for linha in dados:
             if 'World' == linha[0]:
                 dados_mundo.append(linha)
             if 'Brazil' == linha[0]:
@@ -526,8 +528,6 @@ def update_output(num_clicks, val_selected):
         
         return ('O ano selecionado foi {} e você já fez  \
                  {} pesquisas'.format(val_selected, num_clicks), grafico)
-
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
