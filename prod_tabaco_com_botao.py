@@ -103,7 +103,7 @@ def update_output(num_clicks, val_selected):
                 y=0.1, #Posição do text no eixo y
                 xref='paper', #Referência do eixo X
                 yref='paper', #Referência do eixo X
-                text='Fonte: <a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html">\
+                text='Fonte: <a href="https://ourworldindata.org/grapher/tobacco-production">\
                     Our world in Data</a>', #LINK COM A FONTE DA BASE DE DADOS
                 showarrow = False #Questão estética
             )]
