@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from math import isnan
 
 
-dados = pd.read_csv("plotly/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
+dados = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
 #print(dados)
 
 dados_array = dados.values
@@ -120,7 +120,7 @@ def grafico_consumo_por_genero(argumento):
         xaxis_title = 'ano',
         yaxis_title = 'Consumidores de tabaco (em %)',
         title = dict(
-            text = "Porcentagem de uso do tabaco por genero, de 2010 a 2018",
+            text = 'Porcentagem de uso do tabaco por genero para {}'.format(argumento),
             font = dict(
                 family = "Arial",
                 size = 20,
