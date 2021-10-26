@@ -102,7 +102,7 @@ app.layout = html.Div([
             dcc.Input(id='input_state', type='number', inputMode='numeric', value=2017,       #id(IDENTIFICANDO O QUE SERÁ O INPUT), type(QUER DIZER QUE SERÁ ESCRITO UM NÚMERO)
                     #inputmode(DIZ O TIPO DE "LINGUAGEM, NO CASO SERÁ NUMERAL, MAS EM OUTRO CASOS PODE SER LATIN, POR EXEMPLO), value(É O VALOR DO INPUT, OU SEJA, SEMPRE QUE GERAR O GRÁFICO SERÁ NESSE ANO)
                     max=2018, min=1961, required=True), #max(O ANO MÁXIMO QUE PODE SER RECEBIDO), min(O MENOR ANO A SER COLOCADO), required( QUANDO VERDADEIRO DIZ QUE É OBRIGATÓRIO O PREENCHIMENTO)
-            html.Button(id='submit_button', n_clicks=0, children='Gerar gráfico'), #id(IDENTIFICANDO O QUE SERÁ), n_clicks(REPRESENTA O NÚMERO DE VEZES QUE UM ELEMENTO FOI CLICADO, NO CASO O INICIAL SERÁ 0), children(A "CRIANÇA DESSE COMPONENTE, OU SEJA, COMO SERÁ CHAMADO O BOTÃO)
+            html.Button('Gerar gráfico', id='submit_button', n_clicks=0), #id(IDENTIFICANDO O QUE SERÁ), n_clicks(REPRESENTA O NÚMERO DE VEZES QUE UM ELEMENTO FOI CLICADO, NO CASO O INICIAL SERÁ 0), children(A "CRIANÇA DESSE COMPONENTE, OU SEJA, COMO SERÁ CHAMADO O BOTÃO)
             html.Div(id='output_state'), #id(IDENTIFICANDO)
         ],style={'text-align': 'center'}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO
 
@@ -240,8 +240,6 @@ def update_output(num_clicks, val_selected):
                 del ano[index] #Deletando os dados relacionados ao nan
                 del producao[index] #Deletando os dados relacionados ao nan
 
-        dados_array1 = px.data.gapminder().query("year=={}".format(val_selected)) #FILTRANDO OS DADOS QUE SERÃO UTILIZADOS, dados_array FOI DECLARADO NA FUNÇÃO LÁ EM CIMA
-        #px(PLOTLY EXPRESS), gapminder(FUNÇÃO DENTRO DO PX QUE CONSTRUI DADOS), query(CRIA UMA LISTA DE DADOS), DENTRO DO query TEM O ANO QUE SERÁ UTILIZADO O format(ESPECIFICA QUAL O DADO DENTRO  {}) QUE NO CASO SERÁ O ANO ESCOLHIDO NO BOTÃO(submit_button) 
         
 
         fig = go.Figure(data=go.Choropleth( #Recuperando dados do gráfico na base de dados e o tipo de dados
