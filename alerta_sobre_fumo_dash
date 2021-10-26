@@ -1,0 +1,96 @@
+#abrindo as biblioteca
+import pandas as pd 
+import plotly.graph_objects as go 
+
+dados = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/Alerta_sobre_fumo_arquivo.csv") 
+
+dados_lista = dados.values 
+        
+# Função filtra_ano recebe como argumento o 'ano'
+def filtra_por_ano(ano):
+    pais = [] 
+    continente_paises = []
+    #laço para loop, apenas manipulando antes de jogar para o dash
+    for dado in dados_lista: 
+        if dado[0] == ano:
+            pais.append(dado[1])
+             #estamos somando esse "+ '' +" para que quando juntarmos a coluna 3 com o coluna 2 tenha um espaço entre eles
+            continente_paises.append(dado[3].strip() + '  ' + dado[2]) #juntamos o continente com a situação
+
+    continentes = ['África', 'América', 'Ásia', 'Europa', 'Oceania']
+
+    id_continentes = []
+    situacoes = ['Não', 'Sim', 'Não aplicado']
+    #loop para as situações ['Não', 'Sim', 'Não aplicado'] e continentes = ['África', 'América', 'Ásia', 'Europa', 'Oceania']
+    for sit in situacoes:
+        for continente in continentes:
+             #estamos somando esse '' para que quando juntarmos a situação com o continente tenha um espaço entre eles
+            id_continentes.append (sit + '  '+ continente) 
+       
+    ids = ['Alerta sobre o fumo'] + situacoes + id_continentes  +  pais # criar nomes pra 'labels' para chamar em 'parents'
+    labels = ['Alerta sobre o fumo'] + situacoes + continentes * 3 + pais 
+    parents = [''] + ['Alerta sobre o fumo'] * 3 + ['Não'] * len(continentes) + ['Sim'] *len(continentes) + ['Não aplicado'] * len(continentes) + continente_paises
+
+    return ids, labels, parents    
+
+#importando a biblioteca dash
+import dash
+from dash import dcc 
+import dash_html_components as html
+from dash.dependencies import Input, Output
+
+anos = [2008, 2010, 2012, 2014, 2016, 2018]
+
+#definindo uma lista com dicionarios, so para editar as opções no filtro logo abaixo
+opcoes = []
+#criando um dicionário para cada dado "anos" 
+for ano in anos:
+    opcoes.append({"label": ano, "value": ano})
+
+#criando uma pagina
+pagina = dash.Dash(__name__)
+
+#modificando layout, formatação visual da página
+pagina.layout = html.Div([  
+    html.Div("Alerta por ano"), #título 
+    html.Div([
+        html.Div(
+            dcc.Dropdown(
+                id = 'Dropdown', 
+                options = opcoes,
+                value = 2008, #valor inicial que o grafico vai ser gerado.
+                clearable = False #para não aparecer um botãozinho de fechar e não bugar a página
+            )),
+        html.Div(
+            dcc.Graph(id = 'grafico') #recebe a figura     
+        )]
+        )])
+
+#Configuração do callback, jogando para a função logo abaixo de gera_grafico  
+@pagina.callback(
+        Output('grafico','figure'),
+        Input('Dropdown', 'value')
+)
+
+#função gera_grafico recebendo como argumento 'ano'
+def gera_grafico(ano):
+    #temos que colocar novamente esses três para formar o grafico
+    ids, labels, parents = filtra_por_ano(ano)
+    grafico = go.Figure(go.Sunburst( 
+        ids = ids,
+        #Labels:Todos os nomes que irão aparecer no gráfico(parametro fixo)as listas se relacionam
+        labels = labels, 
+        #parents:A inidicação de quem é filho de quem(parametro fixo)
+        parents = parents 
+    ))
+    # Aumentando o tamanho do gráfico
+    grafico.update_layout(
+        height = 700
+    )
+    return grafico
+ 
+ # rodando a página do dash
+if __name__ == '__main__':
+    pagina.run_server(debug = True, use_reloader = False)
+ 
+
