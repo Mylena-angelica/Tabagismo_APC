@@ -70,7 +70,7 @@ def update_output(num_clicks, val_selected):
         
         # definição da função que fará a filtragem dos dados do Brasil e do mundo
         def filtrar_dados(dados_ano_array):
-            # transformando os dados de 2017 que estavam em array para lista
+            # transformando os dados do ano selecionado que estavam em array para lista
             dados_ano_lista = []
             for elemento in dados_ano_array:
                 dados_ano_lista.append(elemento)
