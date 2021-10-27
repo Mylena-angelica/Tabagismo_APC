@@ -201,9 +201,9 @@ app.layout = html.Div([
 
 ########### Layout relacionado ao grafico de Alerto sobre o fumo ########################
        
-        html.Div(
+        html.Div([
             dcc.Graph(id = 'grafico') #recebe a figura     
-        ),
+        ], className="card-body"),
         
         html.Br(),
 
