@@ -10,9 +10,9 @@ from dash.exceptions import PreventUpdate
 
 #IMPORTANDO AS BASES DE DADO
 
-dados_prod_tabaco = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv', sep=',')
-dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
-dados_morte_p_idade = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/death-rates-smoking-age.csv', sep=',')
+dados_prod_tabaco = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv')
+dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv")
+dados_morte_p_idade = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/death-rates-smoking-age.csv')
 dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/Alerta_sobre_fumo_arquivo.csv') 
 dados_morte = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
 
