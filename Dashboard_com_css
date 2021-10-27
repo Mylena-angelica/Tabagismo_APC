@@ -166,7 +166,7 @@ app.layout = html.Div([
                         1993: '1993',
                         1990: '1990'
                     },
-                tooltip={"placement": "bottom", "always_visible": True}
+                
 
             ),
             html.Div(id='slider-output-container'), 
