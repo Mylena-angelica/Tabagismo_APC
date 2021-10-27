@@ -199,7 +199,8 @@ app.layout = html.Div([
         html.Br(),
 
 ########### Layout relacionado ao grafico de Alerto sobre o fumo ########################
-       
+
+        html.Div("Alerta por ano", style = {'color': 'write', 'fontSize' : 26}),       
         html.Div([
             dcc.Graph(id = 'grafico') #recebe a figura     
         ], className="card-body"),
@@ -603,15 +604,7 @@ def gera_grafico(ano):
     # Aumentando o tamanho do gráfico
     grafico.update_layout(
         height = 700,
-        title = dict(
-            text = 'Alerta por ano' 
-            ),     # colocando um título e subtítulo usando html
-            font = dict(
-                family = "Arial",
-                size = 20,
-                color = "grey"
-                ), 
-            )
+    )
 
     return grafico
 
