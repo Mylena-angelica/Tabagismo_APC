@@ -89,7 +89,7 @@ app = dash.Dash(__name__,external_stylesheets=external_stylesheets)
 app.layout = html.Div([
 #html.Div: O layout é composto por uma árvore de "componentes" como html.Div e dcc.Graph, onde saõ escolhidas opções de titulos, subtitutos,..., enfi formatação do visual da pagina.
         html.Div([
-            html.H1("Dados sobre Tabagismo", style = {'color': 'write', 'fontsize' : 30}, className="card-body")
+            html.H1("Dados sobre Tabagismo", style = {'color': 'write',}, className="card-body")
         ]),
 
         html.Div([
