@@ -221,18 +221,6 @@ app.layout = html.Div([
         html.Br(),
         html.Br(),
 
-
-#############################################################################################
-########### Layout relacionado ao botão saiba mais ########################
-    
- #       html.Div([
-        html.Div([
-            html.H1("Cique aqui para mais informações:", 
-            style = {'color': 'write', 'fontSize' : 16}, className="card-body"),
-            html.Button('Saiba mais', id='submit_button6', n_clicks=0), #id(IDENTIFICANDO O QUE SERÁ), n_clicks(REPRESENTA O NÚMERO DE VEZES QUE UM ELEMENTO FOI CLICADO, NO CASO O INICIAL SERÁ 0), children(A "CRIANÇA DESSE COMPONENTE, OU SEJA, COMO SERÁ CHAMADO O BOTÃO)
-        ],style={'text-align': 'center'}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO
-        html.Div(id = 'site') #IDENTIFICANDO O QUE SERÁ USANDO, NO CASO UM GRÁFICO (id É UMA STRING QUE IDENTIFICA O QUE SERÁ USADO NO DASH)
-   
 ])
 
 
@@ -607,22 +595,6 @@ def gera_grafico(ano):
     )
 
     return grafico
-
-
-
-################################# CALLBACK relacionado ao botão saiba mais ######################
-
-@app.callback( #CONFIGURAÇÃO DO CALLBACK
-    [Output(component_id='site',component_property = 'https')], 
-    [Input(component_id='submit_button6', component_property='n_clicks')], #DECLARANDO QUE O submit_button, ESTÁ RELACIONADO AO n_clicks
-)
-
-# A função "abrir_link" abre um site no navegador da Web do computador local em uma nova guia usando Python.
-def abrir_link(n_clicks):
-    if n_clicks > 0:
-        import webbrowser   #importando o modulo usado para abrir o site em uma nova guia.
-        x = webbrowser.open('https://www.paho.org/pt/node/4968', new=2)
-        return x
     
 
 if __name__ == '__main__':
