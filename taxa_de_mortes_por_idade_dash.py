@@ -57,22 +57,16 @@ def update_output(num_clicks, val_selected):
             if 'Brazil' == linha[0]:
                 dados_brasil.append(linha)
         
-        # filtragem para apenas o ano escolhido usando a função filtrar_ano_selecionado 
-        def filtrar_ano_selecionado(dados_todos_anos):
+        # definição da função que fará a filtragem dos dados do Brasil e do mundo
+        def filtrar_dados(dados_todos_anos):
+            # filtragem para apenas o ano escolhido  
             for dado in dados_todos_anos:
                 if dado[2] == val_selected:
                     dados_ano_selecionado = dado
-            
-            return dados_ano_selecionado       
 
-        dados_brasil_ano = filtrar_ano_selecionado(dados_brasil)   
-        dados_mundo_ano = filtrar_ano_selecionado(dados_mundo)        
-        
-        # definição da função que fará a filtragem dos dados do Brasil e do mundo
-        def filtrar_dados(dados_ano_array):
             # transformando os dados do ano selecionado que estavam em array para lista
             dados_ano_lista = []
-            for elemento in dados_ano_array:
+            for elemento in dados_ano_selecionado:
                 dados_ano_lista.append(elemento)
                 
             # arrumando a ordem das idades dos dados
@@ -83,7 +77,7 @@ def update_output(num_clicks, val_selected):
             # pegando apenas os dados numéricos e deletando dados zerados
             mortes_por_idade = dados_ano_lista[3:]
             del mortes_por_idade[1:3]
-
+            
             # arredondando os dados
             mortes_por_idade_arredondado = []
             for num in mortes_por_idade:
@@ -91,11 +85,11 @@ def update_output(num_clicks, val_selected):
     
             return mortes_por_idade_arredondado
         
-        # uso da função filtrar_dados para filtrar e organizar os dados do Brasil
-        mortes_idade_brasil = filtrar_dados(dados_brasil_ano)   
+        # uso da função filtrar_dados para filtrar o ano e organizar os dados do Brasil
+        mortes_idade_brasil = filtrar_dados(dados_brasil)   
         
-        # uso da função filtrar_dados para filtrar e organizar os dados do mundo
-        mortes_idade_mundo = filtrar_dados(dados_mundo_ano) 
+        # uso da função filtrar_dados para filtrar o ano e organizar os dados do mundo
+        mortes_idade_mundo = filtrar_dados(dados_mundo) 
 
         # formulação da variável x do gráfico
         idades = ['Todas as idades', 'Entre 15 e 49 anos', 'Entre 50 e 69 anos', 'Mais de 70 anos']
@@ -139,3 +133,5 @@ if __name__ == '__main__':
 
 
 
+
+       
