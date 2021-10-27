@@ -144,17 +144,17 @@ app.layout = html.Div([
 
 ########### Layout relacionado ao grafico do NUMERO DE MORTES ########################
 
-        html.Div([dcc.Graph(id='our_graph'),
+        html.Div([dcc.Graph(id='our_graph'), #Idenficando que um gráfico sera usado
         ],className="card-body"),
         html.Br(),
         html.Div([
-            dcc.Slider(
+            dcc.Slider( # gerando o slider (barra deslizante)
                 id='my-slider',
-                min= 1990,
-                max= 2017,
-                step= 1,
-                value=2017,
-                marks={
+                min= 1990, #valor minimo do slider
+                max= 2017, #valor maximo do slider
+                step= 1,  #de quanto em quanto vai andar na barra
+                value=2017, # o valor inicial na barra
+                marks={ #valores que vao aparecer em destaque na barra
                         2017: '2017', 
                         2014: '2014',
                         2011: '2011', 
@@ -166,10 +166,9 @@ app.layout = html.Div([
                         1993: '1993',
                         1990: '1990'
                     },
-                tooltip={"placement": "bottom", "always_visible": True}
 
             ),
-            html.Div(id='slider-output-container'), 
+            html.Div(id='slider-output-container'), #Idenficando que um slider sera usado
             ],style={"text-align": "center", "border-radius":"10px", "border":" 1px solid white", "font-weight":"bold"}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO,
         
 
