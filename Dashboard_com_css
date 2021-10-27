@@ -14,7 +14,7 @@ from dash.exceptions import PreventUpdate
 dados_prod_tabaco = pd.read_csv('Dashbord/tobacco-production.csv', sep=',')
 dados_consumo_p_genero = pd.read_csv("plotly/comparing-the-share-of-men-and-women-who-are-smoking.csv", sep=",")
 dados_morte_p_idade = pd.read_csv('Dashbord/death-rates-smoking-age.csv', sep = ',')
-dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/AnyConv.com__Alerta%20sobre%20o%20fumo.csv') 
+dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/Alerta_sobre_fumo_arquivo.csv') 
 dados_morte = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
 
 
@@ -31,42 +31,47 @@ for linha in dados_array_consumo_p_genero:      #verificar se o nome do país po
     if not linha[0] in list_pais_consumo_p_genero and not isnan(float(linha[3])):  #armazenar apenas uma vez o nome de cada pais em pais3
         list_pais_consumo_p_genero.append(linha[0])
 
+
 ################################# Função relacionado ao grafico ALERTA SOBRE O FUMO #######################
 
 #transformando o dataframe em listas array, valeus = propriedade, lê os dados em dataframe e passa para dentro de uma lista de listas
 dados_lista = dados_alerta.values 
 
-#Nova variável, lista vazia
-localizacao = [] 
+# Função filtra_ano recebe como argumento o 'ano'
+def filtra_por_ano(ano):
+    pais = [] 
+    continente_paises = []
+    #laço para loop, apenas manipulando antes de jogar para o dash
+    for dado in dados_lista: 
+        if dado[0] == ano:
+            pais.append(dado[1])
+             #estamos somando esse "+ '' +" para que quando juntarmos a coluna 3 com o coluna 2 tenha um espaço entre eles
+            continente_paises.append(dado[3].strip() + '  ' + dado[2]) #juntamos o continente com a situação
 
-#Nova variável, lista vazia
-resposta = [] 
+    continentes = ['África', 'América', 'Ásia', 'Europa', 'Oceania']
 
-#Criando loop, e uma nova varável chamada 'dado' dentro da 'dados_lista'
-for dado in dados_lista:
-    #Append = adicionar algo ao fim da lista, prolonga ela
-    localizacao.append(dado[0])
-    resposta.append(dado[1].strip()) # Strip é uma função que remove quaisquer espaços iniciais e espaços finais
+    id_continentes = []
+    situacoes = ['Não', 'Sim', 'Não aplicado']
+    #loop para as situações ['Não', 'Sim', 'Não aplicado'] e continentes = ['África', 'América', 'Ásia', 'Europa', 'Oceania']
+    for sit in situacoes:
+        for continente in continentes:
+             #estamos somando esse '' para que quando juntarmos a situação com o continente tenha um espaço entre eles
+            id_continentes.append (sit + '  '+ continente) 
+       
+    ids = ['Alerta sobre o fumo'] + situacoes + id_continentes  +  pais # criar nomes pra 'labels' para chamar em 'parents'
+    labels = ['Alerta sobre o fumo'] + situacoes + continentes * 3 + pais 
+    parents = [''] + ['Alerta sobre o fumo'] * 3 + ['Não'] * len(continentes) + ['Sim'] *len(continentes) + ['Não aplicado'] * len(continentes) + continente_paises
 
-#labels é uma variavel para indicar todos os nomes que vamos colocar no grafico
-labels = ['Alerta sobre o fumo', 'Não', 'Sim', 'Não aplicado'] + localizacao 
-#parents é outra variável, mas funciona como quem é pai de quem
-parents = [''] + ['Alerta sobre o fumo'] * 3 + resposta
+    return ids, labels, parents
 
 
-#Abrindo a biblioteca do plotly
-import plotly.graph_objects as go 
+anos = [2008, 2010, 2012, 2014, 2016, 2018]
 
-#abrindo para começar a colocar o grafico escolhido
-grafico1 = go.Figure(go.Sunburst( 
-    #Labels:Todos os nomes que irão aparecer no gráfico(parametro fixo)as listas se relacionam
-    labels = labels, 
-    #parents:A inidicação de quem é filho de quem(parametro fixo)
-    parents = parents 
-))
-grafico1.update_layout(
-        title_text=("Alerta sobre o fumo"),
-)
+#definindo uma lista com dicionarios, so para editar as opções no filtro logo abaixo
+opcoes = []
+#criando um dicionário para cada dado "anos" 
+for ano in anos:
+    opcoes.append({"label": ano, "value": ano})
 
 
 #UTILIZANDO O DASH PARA CRIAR UMA PÁGINA
@@ -83,10 +88,14 @@ app = dash.Dash(__name__,external_stylesheets=external_stylesheets)
 app.layout = html.Div([
 #html.Div: O layout é composto por uma árvore de "componentes" como html.Div e dcc.Graph, onde saõ escolhidas opções de titulos, subtitutos,..., enfi formatação do visual da pagina.
         html.Div([
-            html.H1("Dados sobre Tabagismo", style = {'color': 'grey', 'fontSize' : 30}, className="card-body")
+            html.H1("Dados sobre Tabagismo", style = {'color': 'write', 'fontsize' : 30}, className="card-body")
         ]),
-        html.Br(),
-        
+
+        html.Div([
+            html.H1("''A epidemia de tabaco é a principal causa de morte, doença e empobrecimento.'' (OPAS/OMS)", 
+            style = {'color': 'write', 'fontSize' : 20}, className="card-body"),
+        ]),
+
 ########### Layout relacionado ao grafico PRODUÇÃO DE TABACO ########################
     
         html.Div([
@@ -106,7 +115,7 @@ app.layout = html.Div([
     
         html.Br(),
         html.Br(),
-    
+        html.Br(),
 
 ########## Layout relacionado ao grafico CONSUMO POR GENERO ############################ 
 
@@ -130,6 +139,7 @@ app.layout = html.Div([
 
 ##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
 
+        html.Br(),
         html.Br(),
         html.Br(),
 
@@ -168,6 +178,7 @@ app.layout = html.Div([
 
         html.Br(),
         html.Br(),
+        html.Br(),
 
 ########### Layout relacionado ao grafico do NUMERO DE MORTES por idade ########################
         
@@ -183,15 +194,47 @@ app.layout = html.Div([
             html.Button('Gerar gráfico', id = 'submit_button4', n_clicks = 0),
             html.Div(id = 'output_states'), 
         ], style={'text-align': 'center'}),
+        
+        html.Br(),
+        html.Br(),
+        html.Br(),
+
+########### Layout relacionado ao grafico de Alerto sobre o fumo ########################
+       
+        html.Div(
+            dcc.Graph(id = 'grafico') #recebe a figura     
+        ),
+        
+        html.Br(),
+
+        #Caixa de opções:
+        html.Div(
+            dcc.Dropdown(
+                id = 'Dropdown', 
+                options = opcoes,
+                value = 2008, #valor inicial que o grafico vai ser gerado.
+                clearable = False, #para não aparecer um botãozinho de fechar e não bugar a página
+                style={"border-radius":"10px", "border":" 1px solid white", "font-weight":"bold", "color":"black"}
+            )
+        ),
+
+        html.Br(),
         html.Br(),
 
 
-########### Layout relacionado ao grafico de Alerto sobre o fumo ########################
-    html.Div([
-        dcc.Graph(figure = grafico1)    # o dcc.Graph irá receber o gráfico da função 'the_graph' que foi endereçada no componente do output
-    ],className="card-body"),
+#############################################################################################
+########### Layout relacionado ao botão saiba mais ########################
+    
+ #       html.Div([
+        html.Div([
+            html.H1("Cique aqui para mais informações:", 
+            style = {'color': 'write', 'fontSize' : 16}, className="card-body"),
+            html.Button('Saiba mais', id='submit_button6', n_clicks=0), #id(IDENTIFICANDO O QUE SERÁ), n_clicks(REPRESENTA O NÚMERO DE VEZES QUE UM ELEMENTO FOI CLICADO, NO CASO O INICIAL SERÁ 0), children(A "CRIANÇA DESSE COMPONENTE, OU SEJA, COMO SERÁ CHAMADO O BOTÃO)
+        ],style={'text-align': 'center'}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO
+        html.Div(id = 'site') #IDENTIFICANDO O QUE SERÁ USANDO, NO CASO UM GRÁFICO (id É UMA STRING QUE IDENTIFICA O QUE SERÁ USADO NO DASH)
+   
+])
 
-    ])
 
 
 ################################# CALLBACK relacionado ao grafico PRODUÇÃO DE TABACO ###############################################
@@ -250,7 +293,14 @@ def update_output(num_clicks, val_selected):
         ))
 
         fig.update_layout(
-            title_text='Produção mundial de tabaco por país no ano de {}'.format(val_selected), #Título do gráfico UTILIZANDO O ANO ESCRITO NO BOTÃO
+            title = dict(
+                text = 'Produção mundial de tabaco por país no ano de {}'.format(val_selected), #Título do gráfico UTILIZANDO O ANO ESCRITO NO BOTÃO
+                font = dict(
+                    family = "Arial",
+                    size = 27,
+                    color = "grey"
+                ), 
+            ),
             geo=dict(
                 showframe=False,
                 showcoastlines=False,
@@ -264,7 +314,7 @@ def update_output(num_clicks, val_selected):
                 text='Fonte: <a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html">\
                     Our world in Data</a>', #LINK COM A FONTE DA BASE DE DADOS
                 showarrow = False #Questão estética
-            )]
+            )],
         )
                 
 
@@ -336,14 +386,13 @@ def grafico_consumo_por_genero(argumento):
 
 
     grafico.update_layout(            #Atualiza o layout incerindo um título para o grafico e subtítulos nos eixos
-        plot_bgcolor = 'white',
         xaxis_title = 'ano',
         yaxis_title = 'Consumidores de tabaco (em %)',
         title = dict(
             text = 'Porcentagem de uso do tabaco por genero para {}'.format(argumento),
             font = dict(
                 family = "Arial",
-                size = 20,
+                size = 27,
                 color = "grey"
             ), 
         ),
@@ -419,8 +468,16 @@ def update_output(value):
 
                         ))
         figura.update_layout(barmode = 'group',  # layout de barras uma do lado da outra
-        title = ("Mortes por fumo a cada 100 mil habitantes")
-        ),
+        plot_bgcolor = 'white',
+        title = dict(
+            text = ('Mortes por fumo a cada 100 mil habitantes'),
+            font = dict(
+                family = "Arial",
+                size = 27,
+                color = "grey"
+                ), 
+            ),
+        ), 
         return ('Ano selecionado "{}" '.format(value), figura)
 
 
@@ -512,11 +569,69 @@ def update_output(num_clicks, val_selected):
 
         # layout e título
         grafico.update_layout(barmode = 'group',  # layout de barras uma do lado da outra
-        title = 'Taxa de mortes prematuras devido ao tabagismo no ano de {}'.format(val_selected)
+        title = dict(
+            text = 'Taxa de mortes por idade, devido ao tabagismo <br><sup> Medida pelo número de mortes prematuras, devido ao tabagismo, por 100.000 indivíduos em um determinado grupo demográfico.</sup>' 
+            ),     # colocando um título e subtítulo usando html
+            font = dict(
+                family = "Arial",
+                size = 20,
+                color = "grey"
+            ), 
         )
         
         return ('O ano selecionado foi {} e você já fez  \
                  {} pesquisas'.format(val_selected, num_clicks), grafico)
+
+
+################################# CALLBACK relacionado ao grafico ALERTA SOBRE O FUMO ##########################################
+
+@app.callback(
+        Output('grafico','figure'),
+        Input('Dropdown', 'value')
+)
+
+#função gera_grafico recebendo como argumento 'ano'
+def gera_grafico(ano):
+    #temos que colocar novamente esses três para formar o grafico
+    ids, labels, parents = filtra_por_ano(ano)
+    grafico = go.Figure(go.Sunburst( 
+        ids = ids,
+        #Labels:Todos os nomes que irão aparecer no gráfico(parametro fixo)as listas se relacionam
+        labels = labels, 
+        #parents:A inidicação de quem é filho de quem(parametro fixo)
+        parents = parents 
+    ))
+    # Aumentando o tamanho do gráfico
+    grafico.update_layout(
+        height = 700,
+        title = dict(
+            text = 'Alerta por ano' 
+            ),     # colocando um título e subtítulo usando html
+            font = dict(
+                family = "Arial",
+                size = 20,
+                color = "grey"
+                ), 
+            )
+
+    return grafico
+
+
+
+################################# CALLBACK relacionado ao botão saiba mais ######################
+
+@app.callback( #CONFIGURAÇÃO DO CALLBACK
+    [Output(component_id='site',component_property = 'https')], 
+    [Input(component_id='submit_button6', component_property='n_clicks')], #DECLARANDO QUE O submit_button, ESTÁ RELACIONADO AO n_clicks
+)
+
+# A função "abrir_link" abre um site no navegador da Web do computador local em uma nova guia usando Python.
+def abrir_link(n_clicks):
+    if n_clicks > 0:
+        import webbrowser   #importando o modulo usado para abrir o site em uma nova guia.
+        x = webbrowser.open('https://www.paho.org/pt/node/4968', new=2)
+        return x
+    
 
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader = False)
