@@ -1,0 +1,731 @@
+import plotly.graph_objects as go
+import pandas as pd
+import math 
+from math import isnan
+import dash
+from dash import dcc, html
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+
+#IMPORTANDO AS BASES DE DADO
+
+dados_prod_tabaco = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/tobacco-production.csv')
+dados_consumo_p_genero = pd.read_csv("https://raw.githubusercontent.com/Beatrizvn/Codigo/main/comparing-the-share-of-men-and-women-who-are-smoking.csv")
+dados_morte_p_idade = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/death-rates-smoking-age.csv')
+dados_alerta = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/Alerta_sobre_fumo_arquivo.csv') 
+dados_morte = pd.read_csv('https://raw.githubusercontent.com/Beatrizvn/Codigo/main/numerodemortes.csv')
+
+
+################## configurações grafico de consumo por genero ################################
+
+dados_array_consumo_p_genero = dados_consumo_p_genero.values
+#print(dados_array)
+
+#Declaração de listas vazias
+list_pais_consumo_p_genero = []
+
+for linha in dados_array_consumo_p_genero:      #verificar se o nome do país por linha para tirar as repetições e 
+    if not linha[0] in list_pais_consumo_p_genero and not isnan(float(linha[3])):  #armazenar apenas uma vez o nome de cada pais em pais3
+        list_pais_consumo_p_genero.append(linha[0])
+
+
+
+################################# Função relacionado ao grafico ALERTA SOBRE O FUMO #######################
+
+anos = [2008, 2010, 2012, 2014, 2016, 2018]
+
+#definindo uma lista com dicionarios, so para editar as opções no filtro logo abaixo
+opcoes = []
+#criando um dicionário para cada dado "anos" 
+for ano in anos:
+    opcoes.append({"label": ano, "value": ano})
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------
+
+#UTILIZANDO O DASH PARA CRIAR UMA PÁGINA
+#app = dash.Dash(__name__)
+
+external_stylesheets = ["https://bootswatch.com/4/darkly/bootstrap.css"]
+
+app = dash.Dash(__name__,external_stylesheets=external_stylesheets)
+
+
+#---------------------------------------------------------------
+#MODIFICANDO O LAYOUT DO APP 
+
+app.layout = html.Div(children = [
+#html.Div: O layout é composto por uma árvore de "componentes" como html.Div e dcc.Graph, onde saõ escolhidas opções de titulos, subtitutos,..., enfi formatação do visual da pagina.
+        html.Div([
+            html.H1("Dados sobre Tabagismo"),
+            html.H4("''A epidemia de tabaco é a principal causa de morte, doença e empobrecimento.'' (OPAS/OMS)"), 
+            #style = {'color': 'write'}, className="card-body"),
+        ],style = {'color': 'write'}, className="card-body"),
+        
+        html.Div([
+            dcc.Markdown(  #O Markdown funciona como um conversor de texto para HTML. Usado para padronizar e facilitar formatação de texto na web
+                children = 'Com os gráficos dessa pagina, deseja-se mostrar um cenário que demonstra os impactos do tabaco no mundo. Relacionando os países que mais produzem, os que alertam, com os dados de morte causadas pelo uso do tabaco. Acesse as bases de dados e os códigos usados para gerar a página e os gráficos [neste repositorio](https://github.com/Mylena-angelica/Tabagismo_APC).', 
+                style = {
+                    'color': 'write',
+                    'fontSize' : 20,
+                    'text-indent': '70px',
+                    'text-align': 'justify',
+                    'background-color': 'grey'
+                    }, className="card-body",
+                
+            )
+        ]),
+        
+        html.Br(),
+        html.Br(),
+        html.Br(),
+
+########### Layout relacionado ao grafico PRODUÇÃO DE TABACO ########################
+        html.Div([
+            html.Div([
+                dcc.Markdown(   #O Markdown funciona como um conversor de texto para HTML. Usado para padronizar e facilitar formatação de texto na web
+                    children = 'O gráfico abaixo apresenta os dados acerca da produção mundial de tabaco entre os anos de 1961 a 2018. No ano de 2018 o Brasil continua sendo o segundo colocado no ranking dos cinco maiores produtores mundiais de fumo. Por outro lado, nesse mesmo ano, a China lidera a produção de fumo em folha representando 36%'+' da produção mundial de tabaco, mesmo tendo uma leve queda na produção chinesa após o ano de 2012.', 
+                    style = {
+                        'color': 'write',
+                        'fontSize' : 20,
+                        'text-indent': '70px',
+                        'text-align': 'justify',
+                        'background-color': 'grey'
+                    }, className="card-body"
+                )
+            ]),
+
+        
+            html.Div([
+                dcc.Graph(id='the_graph') #IDENTIFICANDO O QUE SERÁ USANDO, NO CASO UM GRÁFICO (id É UMA STRING QUE IDENTIFICA O QUE SERÁ USADO NO DASH)
+            ],className = "card-body", style={'background-color': 'grey'}),
+        
+            html.Div([
+                dcc.Input(id='input_state', type='number', inputMode='numeric', value=2017,       #id(IDENTIFICANDO O QUE SERÁ O INPUT), type(QUER DIZER QUE SERÁ ESCRITO UM NÚMERO)
+                    #inputmode(DIZ O TIPO DE "LINGUAGEM, NO CASO SERÁ NUMERAL, MAS EM OUTRO CASOS PODE SER LATIN, POR EXEMPLO), value(É O VALOR DO INPUT, OU SEJA, SEMPRE QUE GERAR O GRÁFICO SERÁ NESSE ANO)
+                        max=2018, min=1961, required=True), #max(O ANO MÁXIMO QUE PODE SER RECEBIDO), min(O MENOR ANO A SER COLOCADO), required( QUANDO VERDADEIRO DIZ QUE É OBRIGATÓRIO O PREENCHIMENTO)
+                html.Button('Gerar gráfico', id='submit_button', n_clicks=0), #id(IDENTIFICANDO O QUE SERÁ), n_clicks(REPRESENTA O NÚMERO DE VEZES QUE UM ELEMENTO FOI CLICADO, NO CASO O INICIAL SERÁ 0), children(A "CRIANÇA DESSE COMPONENTE, OU SEJA, COMO SERÁ CHAMADO O BOTÃO)
+                html.Div(id='output_state'), #id(IDENTIFICANDO)
+            ],style={'text-align': 'center', 'background-color': 'grey'}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO
+        
+        ],className = "card-body", style={'background-color': 'grey',}),
+
+##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
+    
+        html.Br(),
+        html.Br(),
+        html.Br(),
+
+########## Layout relacionado ao grafico CONSUMO POR GENERO ############################ 
+        
+        html.Div([
+            dcc.Markdown(  #O Markdown funciona como um conversor de texto para HTML. Usado para padronizar e facilitar formatação de texto na web
+                children = 'O gráfico abaixo apresenta os dados mundias que relacionam o tabagismo com o gênero entre os anos de 2010 a 2018. A China é o maior produtor e consumidor (em termos absolutos) de tabaco do mundo, segundo os dados apresentados, havendo mais de 300 milhões de fumantes no país, cerca de um terço do total de fumantes do planeta. Na maioria dos países o número de homens fumantes é maior que o de mulheres, com excessão da Dinamarca (Denmark), que em 2018 é o único país que tem mais mulheres fumantes (18,7%) do que homens (18,4%).', 
+                style = {
+                    'color': 'write',
+                    'fontSize' : 20,
+                    'text-indent': '70px',
+                    'text-align': 'justify',
+                    'background-color': 'grey'
+                    }, className="card-body"
+            )
+        ]),
+   
+        
+        #O dcc dropdown determina uma caixa de opções de entrada, no caso os nomes dos paises. Aqui nos endereçamos as identificações
+        html.Div([
+            dcc.Graph(id = "grafico-por-pais"),                   #dcc.Graph irá receber o grafico da função "grafico_morte_por_pais" endereçada no componente "output" do callback
+        ],className = "card-body", style={'background-color': 'grey',}),
+
+        #Caixa de opções: 
+        html.Div([    
+            html.Div(  
+                dcc.Dropdown(                                           
+                    id = "paises",
+                    options = [{'label' : name, 'value' : name} for name in list_pais_consumo_p_genero],      #delimita as opções dos nomes dos paises a serem escolhidos, que estão na variável pais3
+                    value = "Africa Eastern and Southern",                           # esse é o primeiro nome que vai aparecer na caixa de opções
+                    clearable = False,
+                    style={"border-radius":"10px", "border":" 1px solid white", "font-weight":"bold", "color":"black"}
+            ),className="nav-item dropdown"),
+        ],className = "card-body", style={'background-color': 'grey',}),
+
+        html.Div([
+            dcc.Markdown(  # Usado nessa linha por questão estética. Não influencia no código
+                children = ' ',
+                style = {
+                    'background-color': 'grey'
+                }
+            )
+        ],  className="card-body"),
+
+##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
+
+        html.Br(),
+        html.Br(),
+
+########### Layout relacionado ao grafico do NUMERO DE MORTES ########################
+        
+        html.Div([
+            dcc.Markdown(  #O Markdown funciona como um conversor de texto para HTML. Usado para padronizar e facilitar formatação de texto na web
+                children = 'O gráfico abaixo apresenta os dados mundiais que relacionam a quantidade de mortes em cada país relacionada ao uso do cigarro e seus derivados.', 
+                style = {
+                    'color': 'write',
+                    'fontSize' : 20,
+                    'text-indent': '70px',
+                    'text-align': 'justify',
+                    'background-color': 'grey'
+                    }, className="card-body"
+            )
+        ]),
+
+        html.Div([
+            html.Div([dcc.Graph(id='our_graph'),
+            ]),
+
+            html.Div([
+                dcc.Markdown(  # Usado nessa linha por questão estética. Não influencia no código
+                    children = ' ',
+                    style = {
+                        'background-color': 'grey'
+                    }
+                )
+            ], className="card-body"),
+
+            html.Div([
+                dcc.Slider(
+                    id='my-slider',
+                    min= 1990,
+                    max= 2017,
+                    step= 1,
+                    value=2017,
+                    marks={
+                            2017: {'label': '2017', 'style': {'color': 'black'}},
+                            2014: {'label': '2014', 'style': {'color': 'black'}},
+                            2011: {'label': '2011', 'style': {'color': 'black'}},
+                            2008: {'label': '2008', 'style': {'color': 'black'}},
+                            2005: {'label': '2005', 'style': {'color': 'black'}}, 
+                            2002: {'label': '2002', 'style': {'color': 'black'}},
+                            1999: {'label': '1999', 'style': {'color': 'black'}},
+                            1996: {'label': '1996', 'style': {'color': 'black'}},
+                            1993: {'label': '1993', 'style': {'color': 'black'}},
+                            1990: {'label': '1990', 'style': {'color': 'black'}}
+                        },
+                    tooltip={"placement": "bottom", "always_visible": True}
+
+                ),
+                html.Div(id='slider-output-container'), 
+            ],style={"text-align": "center"}), #ALIANDO A POSIÇÃO DOS TEXTOS, QUESTÃO DE ESTILO,
+        ],className="card-body", style={'background-color': 'grey',}),
+
+##################################  pular linhas para adicionar o layout relacionado ao proximo gráfico  ############################
+
+        html.Br(),
+        html.Br(),
+        html.Br(),
+
+########### Layout relacionado ao grafico do NUMERO DA TAXA DE MORTES por idade ########################
+        html.Div([
+            html.Div([
+                dcc.Markdown(  #O Markdown funciona como um conversor de texto para HTML. Usado para padronizar e facilitar formatação de texto na web
+                    children = 'O gráfico abaixo apresenta os dados mundiais que relacionam as taxas de mortes causadas por cada 100.000 indivíduos, pelo tabagismo e a idade das pessoas ao redor do globo.', 
+                    style = {
+                        'color': 'write',
+                        'fontSize' : 20,
+                        'text-indent': '70px',
+                        'text-align': 'justify',
+                        'background-color': 'grey'
+                    }, className="card-body"
+                )
+            ]),
+
+            html.Div([
+                dcc.Graph(id = 'the_graph4')    # o dcc.Graph irá receber o gráfico da função 'the_graph4' que foi endereçada no componente do output
+            ], className="card-body", style={'background-color': 'grey',}),
+
+        
+            html.Div([
+                dcc.Input(id ='input_states', type = 'number', inputMode = 'numeric', value = 2017,   
+                        max = 2017, min = 1990, required = True), 
+
+                html.Button('Gerar gráfico', id = 'submit_button4', n_clicks = 0),
+                html.Div(id = 'output_states'), 
+            ], style={'text-align': 'center', 'background-color': 'grey'}),
+
+        ],className="card-body", style={'background-color': 'grey',}),
+
+
+        html.Br(),
+        html.Br(),
+        html.Br(),
+
+
+########### Layout relacionado ao grafico de Alerto sobre o fumo ########################
+        
+        html.Div([
+            dcc.Markdown(  #O Markdown funciona como um conversor de texto para HTML. Usado para padronizar e facilitar formatação de texto na web
+                children = 'O gráfico abaixo apresenta os dados acerca de quais países no mundo alertam seus cidadãos sobre os riscos do ato de fumar.', 
+                style = {
+                    'color': 'write',
+                    'fontSize' : 20,
+                    'text-indent': '70px',
+                    'text-align': 'justify',
+                    'background-color': 'grey'
+                    }, className="card-body"
+            )
+        ]),
+
+        html.Div("Alerta por ano", style = {'color': 'write', 'fontSize' : 25, 'background-color': 'grey'}),
+        html.Div([
+            dcc.Graph(id = 'grafico') #recebe a figura     
+        ], className="card-body", style = {'background-color': 'grey'}),
+        
+
+        #Caixa de opções:
+        html.Div([
+            html.Div(
+                dcc.Dropdown(  
+                    id = 'Dropdown', 
+                    options = opcoes,
+                    value = 2008, #valor inicial que o grafico vai ser gerado.
+                    clearable = False, #para não aparecer um botãozinho de fechar e não bugar a página
+                    style={"border-radius":"10px", "border":" 1px solid white", "font-weight":"bold", "color":"black"}
+                )
+            ),
+        ], className="card-body", style = {'background-color': 'grey'}),
+
+
+        html.Div([
+            dcc.Markdown(   # Usado nessa linha por questão estética. Não influencia no código
+                children = ' ',
+                style = {
+                    'background-color': 'grey'
+                }
+            )
+        ],  className="card-body"),
+
+
+        html.Br(),
+
+
+#############################################################################################
+########### Layout relacionado ao link saiba mais ########################
+        html.Div([
+            dcc.Markdown(  #O Markdown funciona como um conversor de texto para HTML. Usado para padronizar e facilitar formatação de texto na web
+                children = 'Clique aqui para mais informações: [Saiba mais](https://www.paho.org/pt/node/4968).', 
+                style = {'color': 'write', 'fontSize' : 16}, className="card-body"
+            )
+        ]),
+    ])
+    
+
+
+
+################################# CALLBACK relacionado ao grafico PRODUÇÃO DE TABACO ###############################################
+
+#---------------------------------------------------------------
+@app.callback( #CONFIGURAÇÃO DO CALLBACK
+    [Output('output_state', 'children'), #DECLARANDO O QUE SERÁ OUTPUT
+    Output(component_id='the_graph', component_property='figure')], #DECLARANDO A id DO COMPONENTE E QUAL A SUA PROPRIEDADE, OU SEJA, O GRÁFICO UTILIZADO SERÁ A FIGURA MONTADA NO PLOTLY
+    [Input(component_id='submit_button', component_property='n_clicks')], #DECLARANDO QUE O submit_button, ESTÁ RELACIONADO AO n_clicks
+    [State(component_id='input_state', component_property='value')]  #DECLARANDO QUE O input_state ESTÁ RELACIONADO AO value
+    #State é diferente de Input, POIS AQUELE PERMITE QUE VOCÊ DECLARE VALORES EXTRAS SEM DISPARAR O RETORNO DOS CALLBACKS
+)
+
+#CRIANDO UMA FUNÇÃO PARA O BOTÃO
+def update_output(num_clicks, val_selected):
+    if val_selected is None: 
+        raise PreventUpdate # QUER DIZER QUE SE NÃO FOR ESCOLHIDO NENHUM VALOR, O GRÁFICO NÃO SERÁ ATUALIZADO
+    else:
+        dados_array_prod_tabaco = dados_prod_tabaco.values #Criando variável para os dados
+
+        pais=[] # Lista dos paises, será utlizado os codígos ISO_alpha para indicar a localidade no mapa.
+        ano=[] # Lista dos anos (min. 1961 e máx. 2018)
+        producao=[] # Lista da quantidade de tabaco produzida
+
+        for linha in dados_array_prod_tabaco: #Selecionando os dados da tabela
+            if linha[2]== val_selected: #OS DADOS DO ANO UTILIZADO SERÃO OS DECLARADOS NO BOTÃO, QUE ESTÁ DEFINIDO PELA FUNÇÃO CRIADA ACIMA
+                pais.append(linha[1]) # append serve para criar as listas.
+                ano.append(linha[2])
+                producao.append(linha[3])
+
+        for codes in pais:  # Laço para excluir os dados que não se aplica a ISO_alpha (Dados por continente)
+            if not type(codes)== str: 
+                if math.isnan(float(codes)): #Condição para usar aS informações abaixo, quando aparece nan (ou seja, não existe o código ISO_alpha na tabela)
+                    index=pais.index(codes) #Função index serve para procurar um elemento
+                    del pais[index] #Deletando os dados relacionados ao nan
+                    del ano[index] #Deletando os dados relacionados ao nan
+                    del producao[index] #Deletando os dados relacionados ao nan
+            elif codes=='OWID_WRL': #Excluindo os dados relacionados ao mundo como um todo, os dados ligados a str OWID_WRL
+                index=pais.index(codes)
+                del pais[index] #Deletando os dados relacionados ao nan
+                del ano[index] #Deletando os dados relacionados ao nan
+                del producao[index] #Deletando os dados relacionados ao nan
+  
+
+        fig = go.Figure(data=go.Choropleth( #Recuperando dados do gráfico na base de dados e o tipo de dados
+            locations = pais, #Utiliza os ISO_Alpha (Codes) para localizar os países no gráfico
+            z = producao, #Utiliza os dados de produção, é o que relaciona as cores do gráfico
+            text = val_selected, #DIZ QUE O QUE APARECERÁ NAS CAIXINHAS DE TEXTO, SERÁ O QUE FOI DIGITADO NO BOTÃO, OU SEJA, O ANO
+            colorscale = 'sunsetdark',  # Paleta de cores do mapa
+            autocolorscale=False, # O false determina que você escolhe a paleta de cores
+            reversescale=True, # Quando verdadeira, associa as cores aos valores do z
+            marker_line_color='darkgray', # Cor das fronteiras
+            marker_line_width=0.5, # Espessura das fronteiras
+            colorbar_tickprefix = ' Toneladas ', #Prefixo da coluna da legenda
+            colorbar_title = 'Produção em <br>toneladas', #Título da legenda de cores
+        ))
+
+        fig.update_layout(
+            title = dict(
+                text = 'Produção mundial de tabaco por país no ano de {}'.format(val_selected), #Título do gráfico UTILIZANDO O ANO ESCRITO NO BOTÃO
+                font = dict(
+                    family = "Arial",
+                    size = 25,
+                    color = "grey"
+                ), 
+            ),
+            geo=dict(
+                showframe=False,
+                showcoastlines=False,
+                projection_type='equirectangular'
+            ),
+            annotations = [dict(
+                 x=0.55, #Posição do text no eixo x
+                y=0.1, #Posição do text no eixo y
+                xref='paper', #Referência do eixo X
+                yref='paper', #Referência do eixo X
+                text='Fonte: <a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html">\
+                    Our world in Data</a>', #LINK COM A FONTE DA BASE DE DADOS
+                showarrow = False #Questão estética
+            )],
+        )
+                
+
+        return ('O ano selecionado foi {} e você já fez  \
+                 {} pesquisas'.format(val_selected, num_clicks),fig)  #IRÁ RETORNAR OS INPUTS DECLARADOS LÁ EM CIMA, APARECERÁ DEBAIXO DO CAMPO PARA DIGITAR O ANO
+
+
+
+################################# CALLBACK relacionado ao grafico CONSUMO POR GENERO ###############################################
+
+#As "entradas" e "saídas" da interface de nossa pagina são descritas declarativamente como os argumentos do callback. A função de saída deve estar declarada logo abaixo do callback correspondente, nesse caso a função do gráfico
+#O callback diz ao Dash para chamar a função "grafico_morte_por_pais", sempre que o valor do componente "input"(a caixa de texto) mudar para atualizar os novos atributos do componente "output" na página (o div HTML )
+
+@app.callback(
+    Output("grafico-por-pais", "figure"),
+    Input("paises", 'value')
+)
+
+#A função "grafico_morte_por_pais" recebe como argumento o nome do país escolhido na caixa de opções(Dropdown) e retorna um grafico de barras horizontais
+
+def grafico_consumo_por_genero(argumento):
+
+    ano = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]
+
+    #Declaração das listas vazias. é importante declarar essas listas no incio da função, porque quando for selecionado outro pais pela caixa de opções(Dropdown) essas listas vão ser atualizadas e as informações anteriores não vão aparecer no grafico 
+   
+    sex_fem = []
+    sex_mas = []
+   
+    for linha in dados_array_consumo_p_genero:      #verificar o nome do pais e só considerar as informações entre oa anos:
+                                   #2010, 2012, 2014, 2016 e 2018
+
+        #Para cada uma das datas especificadas na variavel "ano" na condição seram considerados os dados a respeito do pais escolhido, identificado pelo "argumento", que traz o nome do pais escolhido pelo dropdown
+        #O bloco condicional abaixo irá atribuir os dados relativos apenas aos paises, escolhidos pelo parâmetro "argumento", e que apresentem todas as informações necessárias. Ex: linhas que tiverem Nan(not a number) seram desconsideradas  
+
+        if not isnan(float(linha[3])) and linha[2] != 2007 and linha[0] == argumento:
+
+            sex_fem.append(linha[3])    #Atribui o valor da porcentagem de mortos do sexo feminino, para o pais que foi escolhido no ano especifico
+            sex_mas.append(linha[4])    #Atribui o valor da porcentagem de mortos do sexo masculino, para o pais que foi escolhido no ano especifico
+    
+
+    #As variaveis "genero_feminino" e "genero_masculino", passam os dados correspondentes já lidos, para a função "dados_filtrados", que retornará esses dados filtrados, já que alguns anos não apresentavam dados
+
+    genero_feminino = dados_filtrados (sex_fem)
+    genero_masculino = dados_filtrados (sex_mas)
+
+
+    # Gera o gráfio de barras horizontais para a porcentagem de mortos do genero feminino para o país escolhido:
+
+    barra1 = go.Bar(
+        x = ano,
+        y = genero_masculino,
+        marker=dict(color='#0099ff'),   #atribui a cor azul a barra do gráfico
+        name = "Sexo Masculino",        #Nome que aparece na legenda associado a cor escolhida
+    )
+    
+
+    # Gera o gráfio de barras horizontais para a porcentagem de mortos do genero feminino para o país escolhido:
+
+    barra2 = go.Bar(
+        x = ano,
+        y = genero_feminino,
+        marker=dict(color='deeppink'),     #atribui a cor rosa a barra do gráfico
+        name = "Sexo Feminino",
+    )
+
+    grafico = go.Figure([barra1, barra2])    #Associa as barras dos graficos "barra1" e "barra2", para comparação do consumo de tabaco por genero
+
+
+
+    grafico.update_layout(            #Atualiza o layout incerindo um título para o grafico e subtítulos nos eixos
+        plot_bgcolor = '#B7B7B7',
+        xaxis_title = 'ano',
+        yaxis_title = 'Consumidores de tabaco (em %)',
+        title = dict(
+            text = 'Porcentagem de uso do tabaco por genero para {}'.format(argumento),
+            font = dict(
+                family = "Arial",
+                size = 25,
+                color = "grey"
+            ), 
+        ),
+    )
+        
+
+    return grafico
+
+
+#A função "dados_filtrados" irá receber os valores das porcentagens de consumo, dos anos que apresentam dados e depois faz uma média entre uma ano antecessor e um ano sucessor, para os anos que que não apresentavam dados:
+#Onde "a" á o parametro que a função recebe, no caso as porcentagens de consumo de cada genero
+
+def dados_filtrados (a):
+    sexo = []
+
+    for posicao in range(0,4):
+        media1 = 0
+
+        sexo.append(a[posicao])
+        media1 = (a[posicao] + a[posicao + 1]) / 2
+        sexo.append(media1)
+
+    sexo.append(a[4])
+
+    return sexo
+
+
+
+################################# CALLBACK relacionado ao grafico NUMERO DE MORTES ###############################################
+
+@app.callback(
+    Output('slider-output-container', 'children'),
+    Output('our_graph','figure'),
+    [Input('my-slider', 'value')],
+)
+
+
+def update_output(value):
+    if value is None:
+        raise PreventUpdate
+    else:
+
+        dados_array = dados_morte.values 
+
+        pais = []
+        codigo_ISO = []
+        ano = []
+        mortes = []
+        texto = [] 
+
+        for linha in dados_array:
+            if linha[2] == value: #selecionando o ano que sera utilizado
+                pais.append(linha[0])
+                codigo_ISO.append(linha[1])
+                ano.append(linha[2])
+                mortes.append(linha[3])
+                texto.append(f'{linha[0]} - Mortes : {int(linha[3])}') #texto que vai aparecer ao passar o mouse por cima das bolhas
+
+        #Gerando o gráfico
+
+        figura = go.Figure((go.Scattergeo(
+                    locationmode = 'ISO-3', #para achar o local de cada pais no mapa
+                    locations = codigo_ISO, #achar o local de cada pais no mapa
+                    text = texto, #o texto a ser mostrado ao passar o mouse
+                    marker = dict( 
+                        size = mortes,#tamanho das bolinhas
+                        sizemode = 'area', #A  regra para a qual os dados sãoconvertidos em pixels. Evita que as bolhas fiquem enormes
+                        color = mortes, #O que vai levar em conta para definir a escala de cor
+                        colorscale = 'Rainbow', #A cor da barra
+                        cmax = max(mortes), #O valor maximo da barra de cor
+                        cmin = 0, #O valor minimo da barra de cor
+                        colorbar_title = "Mortes"))
+
+                        ))
+        figura.update_layout(barmode = 'group',  # layout de barras uma do lado da outra
+        plot_bgcolor = 'white',
+        title = dict(
+            text = ('Mortes por fumo a cada 100 mil habitantes'),
+            font = dict(
+                family = "Arial",
+                size = 25,
+                color = "grey"
+                ), 
+            ),
+        ), 
+        return ('Ano selecionado "{}" '.format(value), figura)
+
+
+
+################################# CALLBACK relacionado ao grafico NUMERO DA TAXA DE MORTES por idade ###############################################
+
+# configurações do callback: identificação do output, input e state
+@app.callback( 
+    Output(component_id = 'output_states', component_property = 'children'),     # declarando qual será o output
+    Output(component_id = 'the_graph4', component_property = 'figure'),          # declarando o id do componente e sua propriedade
+    [Input(component_id = 'submit_button4', component_property = 'n_clicks')],   # declarando que o submit_button, relaciona-se com o n_clicks
+    [State(component_id = 'input_states', component_property = 'value')]         # declarando O input_state relaciona-se com value
+    #State é diferente de Input, permitindo que você declare valores extras sem disparar o callback
+)
+
+# criando uma função para o botão que vai gerar o gráfico
+def update_output(num_clicks, val_selected):
+    if val_selected is None: 
+        raise PreventUpdate    # se não for selecionado nenhum valor no botão o gráfico não atualizará
+    else:
+        dados = dados_morte_p_idade.values   # a propriedade values lê os dados em dataframe e passa para dentro de uma lista de listas
+         
+        # introdução dos dados do Brasil e do mundo array 
+        dados_mundo = []
+        dados_brasil = []
+
+        for linha in dados:
+            if 'World' == linha[0]:
+                dados_mundo.append(linha)
+            if 'Brazil' == linha[0]:
+                dados_brasil.append(linha)
+        
+        # definição da função que fará a filtragem dos dados do Brasil e do mundo
+        def filtrar_dados(dados_todos_anos):
+            # filtragem para apenas o ano escolhido  
+            for dado in dados_todos_anos:
+                if dado[2] == val_selected:
+                    dados_ano_selecionado = dado
+
+            # transformando os dados do ano selecionado que estavam em array para lista
+            dados_ano_lista = []
+            for elemento in dados_ano_selecionado:
+                dados_ano_lista.append(elemento)
+                
+            # arrumando a ordem das idades dos dados
+            x = dados_ano_lista[6]    # exemplo: [idade_2, idade_1]
+            dados_ano_lista[6] = dados_ano_lista[7]
+            dados_ano_lista[7] = x
+            
+            # pegando apenas os dados numéricos e deletando dados zerados
+            mortes_por_idade = dados_ano_lista[3:]
+            del mortes_por_idade[1:3]
+            
+            # arredondando os dados
+            mortes_por_idade_arredondado = []
+            for num in mortes_por_idade:
+                mortes_por_idade_arredondado.append(round(num, 2))
+    
+            return mortes_por_idade_arredondado
+        
+        # uso da função filtrar_dados para filtrar o ano e organizar os dados do Brasil
+        mortes_idade_brasil = filtrar_dados(dados_brasil)   
+        
+        # uso da função filtrar_dados para filtrar o ano e organizar os dados do mundo
+        mortes_idade_mundo = filtrar_dados(dados_mundo) 
+
+        # formulação da variável x do gráfico
+        idades = ['Todas as idades', 'Entre 15 e 49 anos', 'Entre 50 e 69 anos', 'Mais de 70 anos']
+
+        # formulação do gráfico
+        barra1 = go.Bar(
+            name = 'Brasil',
+            x = idades,
+            y = mortes_idade_brasil,
+            text = mortes_idade_brasil,   # textro mostrando as taxas em cada barra
+            textposition = 'auto'   # localização do texto dentro da barra
+        )
+
+        barra2 = go.Bar(
+            name = 'Mundo',
+            x = idades,
+            y = mortes_idade_mundo,
+            text = mortes_idade_mundo,   # texto mostrando as taxas em cada barra
+            textposition = 'auto'   # localização do texto dentro da barra
+        )
+
+        grafico = go.Figure([barra1, barra2])
+
+        # layout e título
+        grafico.update_layout(barmode = 'group',  # layout de barras uma do lado da outra
+        plot_bgcolor = '#B7B7B7',
+        # colocando um título e subtítulo usando html
+        title = dict(
+            text = 'Taxa de mortes por idade, devido ao tabagismo <br><sup> Medida pelo número de mortes prematuras, devido ao tabagismo, por 100.000 indivíduos em um determinado grupo demográfico.</sup>',
+            font = dict(
+                family = "Arial",
+                size = 25,
+                color = "grey"
+            ), 
+        ),
+        ),
+        # a função retornará o gráfico e a frase abaixo mencionando o ano selecionado(val_selected) e o número de pesquisas(num_clicks)
+        return ('O ano selecionado foi {} e você já fez  \
+                 {} pesquisas'.format(val_selected, num_clicks), grafico)
+
+
+################################# CALLBACK relacionado ao grafico ALERTA SOBRE O FUMO ##########################################
+
+@app.callback(
+        Output('grafico','figure'),
+        Input('Dropdown', 'value')
+)
+
+#função gera_grafico recebendo como argumento 'ano'
+def gera_grafico(ano):
+    #temos que colocar novamente esses três para formar o grafico
+    ids, labels, parents = filtra_por_ano(ano)
+    grafico = go.Figure(go.Sunburst( 
+        ids = ids,
+        #Labels:Todos os nomes que irão aparecer no gráfico(parametro fixo)as listas se relacionam
+        labels = labels, 
+        #parents:A inidicação de quem é filho de quem(parametro fixo)
+        parents = parents 
+    ))
+    # Aumentando o tamanho do gráfico
+    grafico.update_layout(
+        plot_bgcolor = 'grey',
+        height = 700,
+    )
+
+    return grafico
+
+#transformando o dataframe em listas array, valeus = propriedade, lê os dados em dataframe e passa para dentro de uma lista de listas
+dados_lista = dados_alerta.values 
+
+# Função filtra_ano recebe como argumento o 'ano'
+def filtra_por_ano(ano):
+    pais = [] 
+    continente_paises = []
+    #laço para loop, apenas manipulando antes de jogar para o dash
+    for dado in dados_lista: 
+        if dado[0] == ano:
+            pais.append(dado[1])
+             #estamos somando esse "+ '' +" para que quando juntarmos a coluna 3 com o coluna 2 tenha um espaço entre eles
+            continente_paises.append(dado[3].strip() + '  ' + dado[2]) #juntamos o continente com a situação
+
+    continentes = ['África', 'América', 'Ásia', 'Europa', 'Oceania']
+
+    id_continentes = []
+    situacoes = ['Não', 'Sim', 'Não aplicado']
+    #loop para as situações ['Não', 'Sim', 'Não aplicado'] e continentes = ['África', 'América', 'Ásia', 'Europa', 'Oceania']
+    for sit in situacoes:
+        for continente in continentes:
+             #estamos somando esse '' para que quando juntarmos a situação com o continente tenha um espaço entre eles
+            id_continentes.append (sit + '  '+ continente) 
+       
+    ids = ['Alerta sobre o fumo'] + situacoes + id_continentes  +  pais # criar nomes pra 'labels' para chamar em 'parents'
+    labels = ['Alerta sobre o fumo'] + situacoes + continentes * 3 + pais 
+    parents = [''] + ['Alerta sobre o fumo'] * 3 + ['Não'] * len(continentes) + ['Sim'] *len(continentes) + ['Não aplicado'] * len(continentes) + continente_paises
+
+    return ids, labels, parents
+
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True, use_reloader = False)
