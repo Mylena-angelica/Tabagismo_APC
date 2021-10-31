@@ -39,7 +39,8 @@ opcoes = []
 #criando um dicionário para cada dado "anos" 
 for ano in anos:
     opcoes.append({"label": ano, "value": ano})
-
+#label significa o ano que vai aparecer pro usuário 
+#value: é o valor que a opção vai assumir no código
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -698,7 +699,8 @@ def gera_grafico(ano):
 #transformando o dataframe em listas array, valeus = propriedade, lê os dados em dataframe e passa para dentro de uma lista de listas
 dados_lista = dados_alerta.values 
 
-# Função filtra_ano recebe como argumento o 'ano'
+# Essa função filtra de ano por ano
+#quando voce clicar no dropdown e escolher um ano, sera pego o seu respectivo continente, pais e sua situação
 def filtra_por_ano(ano):
     pais = [] 
     continente_paises = []
@@ -718,8 +720,8 @@ def filtra_por_ano(ano):
         for continente in continentes:
              #estamos somando esse '' para que quando juntarmos a situação com o continente tenha um espaço entre eles
             id_continentes.append (sit + '  '+ continente) 
-       
-    ids = ['Alerta sobre o fumo'] + situacoes + id_continentes  +  pais # criar nomes pra 'labels' para chamar em 'parents'
+    #se não criarmos as 'ids' o grafico nao ira funcionar   
+    ids = ['Alerta sobre o fumo'] + situacoes + id_continentes  +  pais # as ids criam nomes pra as 'labels' para chamar em 'parents'
     labels = ['Alerta sobre o fumo'] + situacoes + continentes * 3 + pais 
     parents = [''] + ['Alerta sobre o fumo'] * 3 + ['Não'] * len(continentes) + ['Sim'] *len(continentes) + ['Não aplicado'] * len(continentes) + continente_paises
 
